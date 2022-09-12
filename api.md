@@ -54,8 +54,26 @@
 1. 用浏览器插件不断刷新 114 平台，发现可能有对 ip 封禁（每天同个 ip 访问数量限制）的可能，这块建议看看能不能实现在云服务器上进行动态切换 ip
 2. 目前暂未发现连续刷接口会对账号造成影响，（可以考虑收费，使用虚假账号完成订阅）
 3. 114 平台目前登录方式有两个，微信扫码和手机验证码登录，这步操作需要考虑 cookie 失效后自动完成重新登录，并且更新 cookie
-   * 扫码的方式目前来看无法实现自动化操作，所以暂时不做延伸
-   * 使用接码平台注册账号，注册完成提取Cookie (综合来看使用验证码登录还算是一个方案)
+   - 扫码的方式目前来看无法实现自动化操作，所以暂时不做延伸
+   - 使用接码平台注册账号，注册完成提取 Cookie (综合来看使用验证码登录还算是一个方案)
+4. 114 手机验证码加密方式
+
+      aes 加密
+
+      密钥： imed2019imed2019
+
+      测试平台： https://the-x.cn/cryptography/Aes.aspx
+
+      下面为一个测试用例
+
+      - {
+      - "mobile": "8E91WgqSzEHTX_a_3cFOag==",
+      - "code": "fF60C2fgLcu2GR_YiWTOBg=="
+      - }
+
+      17796761085
+
+      845411
 
 #### 程序需要做的事情
 
@@ -63,6 +81,7 @@
 - 根据 hosCode 获取科室信息 10c186f26ae7ecf8160e2dcf1f2e7312 200053529
 - 用户输入起始监控日期（默认就是当前时间）和结束监控日期（目标预约日期）
 - 到达起始监控日期开始进行监控
+
 #### Todo:
 
 - 新建一张表用户记录上述信息（也就是用户输入信息）
@@ -71,7 +90,9 @@
 - 对于到达监控日期的预约单，开启子进程刷接口
 - 对于到达结束监控日期的子进程进行关闭，关闭这个操作可以放到上一步中
 
-
 #### 鉴权方式
 
 `headers: { Cookies: 'imed_session=atpXyENDKaSaxYo6ZAZvpSFswetcyDJl_5542437; imed_session=hIPDRiKlXtnBISc6Mxy5CXiahqOB2kTW_5542429; secure-key=e5e16e22-236d-478e-bdb5-aef48d5dee5d; imed_session=bsMFCIMQGYXZaUlC53MrWutjFWPMhLSi_5542915; cmi-user-ticket=d0p7EbDA5pFHrPZiLi2NpExOn1ZHnOL5cfrl3Q..; agent_login_img_code=ff5e0edf577e4d84b2e809c84f968641; imed_session_tm=1662874694023', Host: 'www.114yygh.com', 'Content-Type': 'application/json;charset=UTF-8', // 'Cache-Control': 'no-cache', Referer: 'https://www.114yygh.com/', Accept: 'application/json, text/plain, */*', 'Request-Source': 'PC', 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/105.0.0.0 Safari/537.36', 'Accept-Encoding': 'gzip, deflate, br', 'sec-ch-ua': '"Google Chrome";v="105", "Not)A;Brand";v="8", "Chromium";v="105"', 'sec-ch-ua-mobile': '?0', 'sec-ch-ua-platform': 'macOS', 'Sec-Fetch-Dest': 'empty', 'Sec-Fetch-Mode': 'cors', 'Sec-Fetch-Site': 'same-origin' }`
+
+
+
