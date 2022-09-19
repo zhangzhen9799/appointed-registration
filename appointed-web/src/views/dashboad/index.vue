@@ -1,29 +1,37 @@
 <script setup>
-import { ref, reactive, onMounted, watch } from "vue";
-import { useRouter } from "vue-router";
+import { ref, reactive, onMounted, watch, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const router = useRouter();
-const elMenuActive = ref("0");
+const route = useRoute();
+const elMenuActive = computed(() => {
+  return menuList.filter((item) => item.activeNames.includes(route.name))[0]
+    .index;
+});
 
+console.log("elMenuActive", elMenuActive);
 const menuList = [
   {
     label: "平台信息",
     index: "0",
     route: { name: "Home" },
+    activeNames: ["Home"],
   },
   {
     label: "预约",
     index: "1",
     route: { name: "SelectHos" },
+    activeNames: ["SelectHos", "SelectDep", "SelectDate"],
   },
   {
     label: "我的预约订单",
     index: "2",
     route: { name: "AppointmentList" },
+    activeNames: ["AppointmentList"],
   },
 ];
 
-
+console.log("route", route.name);
 </script>
   
 <template>
