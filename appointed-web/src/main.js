@@ -3,7 +3,7 @@ import App from './App.vue';
 import router from './router';
 import store from './store';
 
-import './utils/common';
+
 // 第三方组件库注册
 import componentInit from '@/components/otherComponents';
 
