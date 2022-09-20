@@ -10,3 +10,7 @@ export const getHosListAPI = (params) => {
     `/114/get-hos-list?name=${params.name}&levelText=${params.levelText}&pageSize=${params.pageSize}&pageNo=${params.pageNo}`
   );
 };
+
+export const getDepListByHoscodeAPI = (params) => {
+  return get(`/114/get-depart-list?hoscode=${params.hoscode}`);
+};

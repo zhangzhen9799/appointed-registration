@@ -30,8 +30,6 @@ const menuList = [
     activeNames: ["AppointmentList"],
   },
 ];
-
-console.log("route", route.name);
 </script>
   
 <template>

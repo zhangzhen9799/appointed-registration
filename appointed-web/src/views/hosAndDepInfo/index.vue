@@ -1,11 +1,12 @@
 <script setup>
 import { ref, reactive, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
+const route = useRoute();
 const router = useRouter();
 
-const hosInfo = reactive({ name: "" });
-const depInfo = reactive({ name: "" });
+const hosInfo = reactive({});
+const depInfo = reactive({});
 
 const breadcrumbList = computed(() => {});
 
@@ -20,7 +21,6 @@ const selectDepHandle = (_depInfo) => {
 
 const selectDateHandle = () => {};
 
-const routeIdx = ref(0);
 const routeList = [
   {
     name: "SelectHos",
@@ -33,18 +33,20 @@ const routeList = [
     name: "SelectDate",
   },
 ];
+const routeIdx = computed(() =>
+  routeList.findIndex((item) => route.name === item.name)
+);
+
 const prevBtnHandle = () => {
   if (routeIdx.value > 0) {
-    routeIdx.value--;
-    console.log("routeList[routeIdx]", routeIdx.value);
-    router.push(routeList[routeIdx.value]);
+    console.log("routeIdx==>", routeIdx.value);
+    router.push(routeList[routeIdx.value - 1]);
   }
 };
 const nextBtnHandle = () => {
   if (routeIdx.value < routeList.length - 1) {
-    routeIdx.value++;
-    console.log("routeList[routeIdx]", routeIdx.value);
-    router.push(routeList[routeIdx.value]);
+    console.log("routeIdx==>", routeIdx.value);
+    router.push(routeList[routeIdx.value + 1]);
   }
 };
 </script>
@@ -75,6 +77,8 @@ const nextBtnHandle = () => {
           @selectHos="selectHosHandle"
           @selectDep="selectDepHandle"
           @selectDate="selectDateHandle"
+          :hosInfo="hosInfo"
+          :depInfo="depInfo"
         ></router-view>
       </transition>
       <el-button-group>
