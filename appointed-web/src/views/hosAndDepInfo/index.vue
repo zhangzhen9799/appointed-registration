@@ -81,7 +81,7 @@ const nextBtnHandle = () => {
           :depInfo="depInfo"
         ></router-view>
       </transition>
-      <el-button-group>
+      <!-- <el-button-group>
         <el-button
           type="primary"
           :disabled="routeIdx <= 0"
@@ -96,7 +96,7 @@ const nextBtnHandle = () => {
         >
           下一步
         </el-button>
-      </el-button-group>
+      </el-button-group> -->
     </div>
   </div>
 </template>

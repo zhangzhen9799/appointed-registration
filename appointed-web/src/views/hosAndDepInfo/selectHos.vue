@@ -1,10 +1,12 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
+import { useRouter } from "vue-router";
 
 import { getHosListAPI } from "@/api/common.js";
 import { Picture as IconPicture } from "@element-plus/icons-vue";
 
 const emits = defineEmits(["selectHos"]);
+const router = useRouter();
 
 const hosList = reactive([]);
 const totalCount = ref(0);
@@ -51,6 +53,12 @@ const changePageHandle = (curPageNo) => {
 
 const clickHosItem = (item, $e) => {
   emits("selectHos", item);
+  router.push({
+    name: "SelectDep",
+    query: {
+      hoscode: item.code,
+    },
+  });
 };
 </script>
     
@@ -76,7 +84,13 @@ const clickHosItem = (item, $e) => {
         @click="clickHosItem(item)"
       >
         <div class="hos-item-left">
-          <div class="hos-item-title">{{ item.name.length > 24 ? item.name.substring(0, 24) + '...' : item.name }}</div>
+          <div class="hos-item-title">
+            {{
+              item.name.length > 24
+                ? item.name.substring(0, 24) + "..."
+                : item.name
+            }}
+          </div>
           <div class="hos-item-bottom">
             <div class="hos-item-level">{{ item.levelText }}</div>
             <div class="hos-item-time">每天{{ item.openTimeText }}放号</div>

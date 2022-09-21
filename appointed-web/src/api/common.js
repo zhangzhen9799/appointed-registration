@@ -14,3 +14,14 @@ export const getHosListAPI = (params) => {
 export const getDepListByHoscodeAPI = (params) => {
   return get(`/114/get-depart-list?hoscode=${params.hoscode}`);
 };
+
+// 提交预约
+
+export const postAppointmentRecordAPI = (params) => {
+  return post('/114/add-appointment-record', params);
+};
+
+// 查询预约列表
+export const getAppointmentListAPI = (params) => {
+  return get('/114/get-appointment-list');
+};

@@ -1,21 +1,20 @@
 <script setup>
 import { ref, reactive, onMounted } from "vue";
 import { getDepListByHoscodeAPI } from "@/api/common.js";
+import { useRoute, useRouter } from "vue-router";
 
-const emits = defineEmits(['selectDep'])
+const emits = defineEmits(["selectDep"]);
+const route = useRoute();
+const router = useRouter();
 
-const props = defineProps({
-  hosInfo: {
-    type: Object,
-  },
-});
 onMounted(() => {
   validateHosInfoExistence();
 });
 
 const validateHosInfoExistence = () => {
-  if (props.hosInfo.code !== undefined) {
-    getDepListHandle(props.hosInfo.code);
+  console.log("route.query.hoscode", route.query.hoscode);
+  if (route.query.hoscode !== undefined) {
+    getDepListHandle(route.query.hoscode);
   } else {
     // 请先选择医院，再来选择科室
     ElMessage({
@@ -44,8 +43,15 @@ const departItemClick = (parent, child) => {
   const firstDepcode = parent.code;
   const secondDepcode = child.code;
   const name = child.name;
-  emits('selectDep', {firstDepcode, secondDepcode, name})
-
+  emits("selectDep", { firstDepcode, secondDepcode, name });
+  router.push({
+    name: "SelectDate",
+    query: {
+      hoscode: route.query.hoscode,
+      firstcode: firstDepcode,
+      secondcode: secondDepcode,
+    },
+  });
 };
 </script>
       
@@ -79,7 +85,7 @@ const departItemClick = (parent, child) => {
 }
 
 div.item-children {
-  width: 40vw;
+  width: 60vw;
   display: flex;
   flex-wrap: wrap;
   div.item-child {
