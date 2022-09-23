@@ -18,15 +18,48 @@ const getAppointList = async () => {
 const timeFormat = (time) => {
   return moment(time).format("YYYY-MM-DD hh:mm:ss");
 };
+
+const stateToBtnParams = (state) => {
+  let result = {
+    type: "success",
+    text: "等待监控",
+  };
+  switch (state) {
+    case 1:
+      result = {
+        type: "info",
+        text: "等待监控",
+      };
+      break;
+    case 2:
+      result = {
+        type: "warning",
+        text: "监控中",
+      };
+      break;
+    case 3:
+      result = {
+        type: "success",
+        text: "监控结束",
+      };
+      break;
+    case 4:
+      result = {
+        type: "info",
+        text: "已取消监控",
+      };
+      break;
+  }
+  return result;
+};
 </script>
   
 <template>
   <div class="appoint-container">
     <el-table :data="appointmentList" style="width: 100%">
-      <el-table-column fixed prop="appointmentid" label="预约id" width="150" />
-      <el-table-column prop="hoscode" label="医院" width="120" />
-      <el-table-column prop="firstdepcode" label="科室" width="120" />
-      <el-table-column prop="seconddepcode" label="门诊" width="120" />
+      <el-table-column fixed prop="id" label="预约id" width="150" />
+      <el-table-column prop="hosname" label="医院" width="120" />
+      <el-table-column prop="second_depname" label="科室" width="120" />
       <el-table-column prop="starttime" label="起始时间" width="120">
         <template v-slot:default="{ row }">
           <div>
@@ -41,9 +74,17 @@ const timeFormat = (time) => {
           </div>
         </template>
       </el-table-column>
-      <el-table-column prop="interval" label="时间间隔(ms)" width="120" />
+      <el-table-column prop="inter_time" label="时间间隔(ms)" width="120" />
       <el-table-column prop="receive_email" label="接收邮箱" width="120" />
-      <el-table-column prop="state" label="预约状态" />
+      <el-table-column prop="state" label="预约状态">
+        <template v-slot:default="{ row }">
+          <div>
+            <el-tag :type="stateToBtnParams(row.state).type">{{
+              stateToBtnParams(row.state).text
+            }}</el-tag>
+          </div>
+        </template>
+      </el-table-column>
       <!-- <el-table-column fixed="right" label="Operations" width="120">
         <template #default>
           <el-button link type="primary" size="small" @click="handleClick"
