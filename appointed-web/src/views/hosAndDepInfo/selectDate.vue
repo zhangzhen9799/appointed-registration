@@ -48,7 +48,7 @@ const createAppointment = async () => {
 
   const { data } = await postAppointmentRecordAPI(params);
 
-  if (data.success) {
+  if (data.data === 'success') {
     ElMessage({
       message: "创建成功",
       type: "success",

@@ -102,6 +102,187 @@
    | code  | string | --- | 短信验证码加密后字符串                                                                                          |
    | mobile | string | ---       | 手机号加密后字符串                                                                 |
 
+8. 获取科室某一天的剩余号详情
+   https://www.114yygh.com/web/product/detail?_time=${Date.now()}
+   Method: POST
+   鉴权: Cookie
+   接口所在页面: https://www.114yygh.com/hospital/162/eb89d3cd9db56d8cc3e29109aed61f6b/200048496/source
+
+   | 参数           | 类型   | 默认值    | 含义                                                                                           |
+   | -------------- | ------ | --------- | ---------------------------------------------------------------------------------------------- |
+   | firstDeptCode  | number | 科室 code | 时间戳                                                                                         |
+   | secondDeptCode | number | ---       | 门诊 code (接口 2 中返回值中)                                                                  |
+   | hosCode        | number | ---       | 医院 code (接口 1 中返回值中)                                                                  |
+   | target           | date | 1         | 格式 2022-10-01|
+
+   返回值：
+
+   ```js
+      res.data = [
+         {
+            "dutyCode": "MORNING",
+            "dutyImgUrl": "//img.114yygh.com/fe/home/iconfont/a87ff679a2f3e71d9181a67b7542122c",
+            "detail": [
+               {
+               "uniqProductKey": "ce3bd6aded3a7cc339dcbd87b40c35429a5cd2b0",
+               "doctorName": "刘一涵",
+               "doctorTitleName": "副主任医师",
+               "skill": "种植，只看口腔种植科，种植牙、种植美学修复、前牙美容修复及活动及固定义齿修复。",
+               "period": [],
+               "fcode": "&#xf7ee;&#xf128;",
+               "ncode": "&#xf128;",
+               "wnumber": 22,
+               "znumber": 24
+               }
+            ],
+            "showIndexPosition": 0,
+            "showNumber": true,
+            "showPrice": true
+         },
+         {
+            "dutyCode": "AFTERNOON",
+            "dutyImgUrl": "//img.114yygh.com/fe/home/iconfont/a87ff679a2f3e71d9181a67b7542122c",
+            "detail": [
+               {
+               "uniqProductKey": "a0c335d532679bc3ebc3014f2f0890f14ed17f57",
+               "doctorName": "刘一涵",
+               "doctorTitleName": "副主任医师",
+               "skill": "种植，只看口腔种植科，种植牙、种植美学修复、前牙美容修复及活动及固定义齿修复。",
+               "period": [],
+               "fcode": "&#xf7ee;&#xf128;",
+               "ncode": "&#xf15e;",
+               "wnumber": 13,
+               "znumber": 30
+               }
+            ],
+            "showIndexPosition": 0,
+            "showNumber": true,
+            "showPrice": true
+         }
+      ]
+   
+   ```
+   注意：猜测 fcode ncode 图表字体，用来加密，其实可以避免爬取，参考对应其响应参数中的 dutyImgUrl, 可以将其下载下来然后再将文件后缀名修改为ttf
+
+   fcode 对应的是价格 ncode 对应的剩余号数量 这个应该是对应了三个字体文件，vscode 下载一个字体预览的插件找到这个规律
+
+   判断是否有余号  wnumber 为奇数表示还有余号
+
+9. 判断用户是否实名 （可能有cookie 变化，需要重新塞进去）
+   https://www.114yygh.com/web/user/real-name/status?_time=1664527932720
+   Method: GET
+   鉴权: Cookie
+   接口所在页面: https://www.114yygh.com/hospital/162/eb89d3cd9db56d8cc3e29109aed61f6b/200048496/source
+
+   返回值 
+   ```json
+      {
+         "status": "AUTH_PASS",
+         "name": "*贺",
+         "idTypeView": "居民身份证",
+         "idNo": "******2116",
+         "message": "实名认证成功"
+      }
+   ```
+
+10. 确认预约详情
+   https://www.114yygh.com/web/product/confirm?_time=1664528415669
+   Method: POST
+   鉴权: Cookie
+   接口所在页面: https://www.114yygh.com/hospital/162/eb89d3cd9db56d8cc3e29109aed61f6b/200048496/source
+
+   | 参数           | 类型   | 默认值    | 含义                                                                                           |
+   | -------------- | ------ | --------- | ---------------------------------------------------------------------------------------------- |
+   | firstDeptCode  | number | 科室 code | 时间戳                                                                                         |
+   | secondDeptCode | number | ---       | 门诊 code (接口 2 中返回值中)                                                                  |
+   | hosCode        | number | ---       | 医院 code (接口 1 中返回值中)                                                                  |
+   | target           | date | 1         | 格式 2022-10-01|    |
+   | dutyTime           | number or string | 0        |  |
+   | uniqProductKey    | string |        | 科室唯一信息  |
+
+   返回值：
+   ```json
+      {
+         "uniqProductKey": "c1fec2c4c7b73f32fd94798084f9364a633a22f0",
+         "hospitalName": "中日友好医院",
+         "departmentName": "儿科门诊",
+         "doctorName": "医生",
+         "doctorTitleName": "医生",
+         "skill": null,
+         "visitTime": "2022年10月01日 周六 下午 ",
+         "totalFee": "&#xf3c2;&#xf38a;",
+         "serviceFee": "50",
+         "showFee": true,
+         "needRemoteHospitalCard": false,
+         "dataItem": {
+            "hospitalCardId": 1,
+            "hospitalCardIdTip": null,
+            "jytCardId": 2,
+            "jytCardIdTip": null,
+            "smsCode": 4,
+            "smsCodeTip": null,
+            "contactUserInfo": 2
+         },
+         "commonRegisterNotice": null,
+         "dutyImgUrl": "//img.114yygh.com/fe/home/iconfont/1679091c5a880faf6fb5e6087eb1b2dc",
+         "showRegRule": null,
+         "takePlaceTips": ""
+      }
+   ```
+
+
+11. 获取就诊人信息
+   https://www.114yygh.com/web/patient/list?_time=${Date.now()}&showType=ORDER_CONFIRM
+   Method: GET
+   鉴权: Cookie
+   接口所在页面: https://www.114yygh.com/hospital/270/submission?hosCode=270&firstDeptCode=15bdfe158b9142390a393a474ace6571&secondDeptCode=200043560&dutyTime=0&dutyDate=2022-10-01&uniqProductKey=c1fec2c4c7b73f32fd94798084f9364a633a22f0
+
+   | 参数           | 类型   | 默认值    | 含义                                                                                           |
+   | -------------- | ------ | --------- | ---------------------------------------------------------------------------------------------- |
+   | _time  | number |  | 时间戳                                                                                         |
+   | showType | string | ORDER_CONFIRM       | 
+
+   返回值：
+   ```json
+      {
+         "count": 1,
+         "list": [
+            {
+               "patientName": "黄贺",
+               "idCardType": "IDENTITY_CARD",
+               "idCardTypeView": "居民身份证",
+               "idCardNo": "4114****2116",
+               "idCardNoView": "4114****2116",
+               "phone": "17796761085",
+               "status": "BIND",
+               "statusTips": "",
+               "cardList": [
+               {
+                  "cardType": "SOCIAL_SECURITY",
+                  "cardTypeView": "社保卡",
+                  "cardNo": "1298****600X",
+                  "cardNoView": "1298****600X",
+                  "medicareType": "MEDICARE_CARD",
+                  "medicareTypeView": "医保"
+               },
+               {
+                  "cardType": "IDENTITY_CARD",
+                  "cardTypeView": "居民身份证",
+                  "cardNo": "4114****2116",
+                  "cardNoView": "4114****2116",
+                  "medicareType": "SELF_PAY_CARD",
+                  "medicareTypeView": "自费"
+               }
+               ],
+               "options": []
+            }
+         ]
+      }
+   ```
+
+
+
+
 #### 注意事项
 
 1. 用浏览器插件不断刷新 114 平台，发现可能有对 ip 封禁（每天同个 ip 访问数量限制）的可能，这块建议看看能不能实现在云服务器上进行动态切换 ip
@@ -134,6 +315,8 @@
 - 根据 hosCode 获取科室信息 10c186f26ae7ecf8160e2dcf1f2e7312 200053529
 - 用户输入起始监控日期（默认就是当前时间）和结束监控日期（目标预约日期）
 - 到达起始监控日期开始进行监控
+- 监控到有剩余号的，启动真实号码不挂代理去预约号（目前发现最好使用短信验证码登录，这样在提交的时候似乎可以不需要短信验证了）
+- 有余量通知用户，帮忙挂号成功也通过邮件通知用户
 
 #### Todo:
 
