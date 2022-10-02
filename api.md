@@ -281,7 +281,104 @@
    ```
 
 
+12. 开始挂号
+   https://www.114yygh.com/web/order/save?_time={Date.now()}
+   Method: GET
+   鉴权: Cookie
+   接口所在页面: https://www.114yygh.com/hospital/H02110003/submission?hosCode=H02110003&firstDeptCode=04&secondDeptCode=644&dutyTime=0&dutyDate=2022-10-08&uniqProductKey=16ed85b4656f876922ba4f8c8499c51bf0a8ddbd
 
+   | 参数           | 类型   | 默认值    | 含义                                                                                           |
+   | -------------- | ------ | --------- | ---------------------------------------------------------------------------------------------- |
+   | cardNo | string |  ---      | 用户医保卡号或者是身份证号 |
+   | cardType | string |  SOCIAL_SECURITY (社保) 或者是 IDENTITY_CARD （身份证）   | 用户选择就诊卡的类型 （社保号和身份证） |
+   | firstDeptCode  | number | 科室 code | 时间戳                                                                                         |
+   | secondDeptCode | number | ---       | 门诊 code (接口 2 中返回值中)                                                                  |
+   | hosCode        | number | ---       | 医院 code (接口 1 中返回值中)                                                                  |
+   | target           | date | 1         | 格式 2022-10-01|    |
+   | dutyTime           | number or string | 0        |  |
+   | uniqProductKey    | string |        | 科室唯一信息  |
+   | orderFrom | string | 'HOSP' | |
+   | phone | string | | 用户手机号 |
+   | treatmentDay | string | | 跟上面的target 一致 |
+   | smsCode | string | | 空字符串
+
+   返回值：
+   ``` json
+      {
+         "orderNo": "211068905801",
+         "lineup": false
+      }
+      // 如果data 为null 发送邮件给用户msg
+      // 如果data 不为null 请求13接口，并将13接口的返回值发邮件给用户
+   ```
+
+13. 查询预约是否成功
+   https://www.114yygh.com/web/order/detail?_time={Date.now()}&hosCode={hosCode}&orderNo={orderNo}
+   Method: GET
+   鉴权: Cookie
+   接口所在页面: https://www.114yygh.com/hospital/H02110003/order/detail/211068905801?from=submission
+
+   | 参数           | 类型   | 默认值    | 含义                                                                                           |
+   | -------------- | ------ | --------- | ---------------------------------------------------------------------------------------------- |
+   | orderNo | string |  ---      | 接口12 de 返回值 |
+   | hosCode        | number | ---       | 医院 code (接口 1 中返回值中)  |
+   | _time | number | --- | 时间戳 | 
+   
+   返回值：
+   ``` json
+      {
+         "orderNo": "211068905801",
+         "identifyingCode": null,
+         "orderStatus": "BOOKING_SUCCESS",
+         "orderStatusView": "预约成功",
+         "orderType": "NON_PAYMENT",
+         "orderTime": "2022-10-02 23:19:17",
+         "canCancel": true,
+         "cancelType": null,
+         "cancelTime": null,
+         "orderBaseInfo": {
+            "hosCode": "H02110003",
+            "hosName": "北京大学第一医院",
+            "deptCode": "644",
+            "deptName": "耳鼻喉科门诊-EBHKMZ",
+            "doctorName": "董冰婉",
+            "doctorTitle": "普通号50",
+            "doctorSkill": "",
+            "serviceFee": "50",
+            "visitTimeTips": "2022年10月08日 周六 下午",
+            "takeTimeTips": null,
+            "takePlaceTips": "",
+            "cancelTimeTips": null,
+            "attention": null,
+            "periodView": null,
+            "dutyDate": null,
+            "qrTipMessage": null,
+            "qrCodeImg": null
+         },
+         "patientInfo": {
+            "patientName": "黄贺",
+            "patientIdType": null,
+            "patientIdNo": null,
+            "cardType": "SOCIAL_SECURITY",
+            "cardTypeView": "社保卡",
+            "cardNo": "1298****600X",
+            "medicareType": "MEDICARE_CARD",
+            "medicareTypeView": "医保"
+         },
+         "payInfo": {
+            "payStatus": null,
+            "payFee": null,
+            "payTime": null,
+            "payRemainTime": 0,
+            "payCloseMilliseconds": null,
+            "userAmount": null,
+            "medicalAmount": null,
+            "refundTime": null
+         }
+      }
+   ```
+
+   * 可以将此接口的返回值进行判断后发送邮件给下单用户
 
 #### 注意事项
 
@@ -300,14 +397,15 @@
 
    下面为一个测试用例
 
-   - {
-   - "mobile": "8E91WgqSzEHTX_a_3cFOag==",
-   - "code": "fF60C2fgLcu2GR_YiWTOBg=="
-   - }
+   {
+      "mobile": "8E91WgqSzEHTX_a_3cFOag==",
+      "code": "fF60C2fgLcu2GR_YiWTOBg=="
+   }
 
    17796761085
 
    845411
+5. 代预约能力需要用户提前使用短信验证的方式进行登录，此方式在挂号的时候不会再弹出短信验证
 
 #### 程序需要做的事情
 
