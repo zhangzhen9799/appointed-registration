@@ -1,5 +1,5 @@
 node_modules
 dist
-# src/logs/allLogs/*
-# src/logs/errorLogs/*
-# src/logs/Logs114/*
+src/logs/allLogs/*
+src/logs/errorLogs/*
+src/logs/Logs114/*
