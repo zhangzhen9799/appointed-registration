@@ -1,0 +1,2 @@
+::1 - - [03/Sep/2022:04:19:28 +0000] "GET /find-photo?id=3 HTTP/1.1" 404 149 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36"
+::1 - - [03/Sep/2022:04:19:43 +0000] "POST /register HTTP/1.1" 404 148 "-" "PostmanRuntime/7.29.2"
