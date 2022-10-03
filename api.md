@@ -113,7 +113,7 @@
    | firstDeptCode  | number | 科室 code | 时间戳                                                                                         |
    | secondDeptCode | number | ---       | 门诊 code (接口 2 中返回值中)                                                                  |
    | hosCode        | number | ---       | 医院 code (接口 1 中返回值中)                                                                  |
-   | target           | date | 1         | 格式 2022-10-01|
+   | target         | date | ---       | 格式 2022-10-01|
 
    返回值：
 
