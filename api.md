@@ -110,9 +110,9 @@
 
    | 参数           | 类型   | 默认值    | 含义                                                                                           |
    | -------------- | ------ | --------- | ---------------------------------------------------------------------------------------------- |
-   | firstDeptCode  | number | 科室 code | 时间戳                                                                                         |
-   | secondDeptCode | number | ---       | 门诊 code (接口 2 中返回值中)                                                                  |
-   | hosCode        | number | ---       | 医院 code (接口 1 中返回值中)                                                                  |
+   | firstDeptCode  | string | 科室 code | 时间戳                                                                                         |
+   | secondDeptCode | string | ---       | 门诊 code (接口 2 中返回值中)                                                                  |
+   | hosCode        | string | ---       | 医院 code (接口 1 中返回值中)                                                                  |
    | target         | date | ---       | 格式 2022-10-01|
 
    返回值：
@@ -281,9 +281,9 @@
    ```
 
 
-12. 开始挂号
+12. 提交挂号申请
    https://www.114yygh.com/web/order/save?_time={Date.now()}
-   Method: GET
+   Method: POST
    鉴权: Cookie
    接口所在页面: https://www.114yygh.com/hospital/H02110003/submission?hosCode=H02110003&firstDeptCode=04&secondDeptCode=644&dutyTime=0&dutyDate=2022-10-08&uniqProductKey=16ed85b4656f876922ba4f8c8499c51bf0a8ddbd
 

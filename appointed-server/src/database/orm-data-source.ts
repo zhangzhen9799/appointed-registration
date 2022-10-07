@@ -7,6 +7,7 @@ import { User } from './model/User'
 import { Hospital } from './model/Hospital'
 import { Department } from './model/Department'
 import { AppointmentRecord } from './model/AppointmentRecord'
+import { AppointmentSuccessRecord } from './model/AppointmentSuccessRecord'
 
 export const OrmDataSource = new DataSource({
   type: 'mysql',
@@ -17,5 +18,5 @@ export const OrmDataSource = new DataSource({
   database: 'test',
   synchronize: true,
   logging: false,
-  entities: [User, Department, Hospital, AppointmentRecord]
+  entities: [User, Department, Hospital, AppointmentRecord, AppointmentSuccessRecord]
 })
