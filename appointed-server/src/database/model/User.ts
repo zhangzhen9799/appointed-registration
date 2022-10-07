@@ -1,10 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, Column, Generated, PrimaryColumn } from 'typeorm'
 import bcrypt from 'bcrypt'
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
-  userId: number
+  @Generated('uuid')
+  @PrimaryColumn()
+  userId: string
 
   @Column({
     default: ''
@@ -51,7 +52,7 @@ export class User {
 }
 
 export interface UserType {
-  userId?: number
+  userId?: string
   nikeName?: string
   email?: string
   password?: string

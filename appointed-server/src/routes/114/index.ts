@@ -7,7 +7,10 @@ import {
   setAllDepartListToSqlAsync
 } from 'src/controllers/hos-monitor/appointedSearch'
 import { AppointmentRecord } from 'src/database/model/AppointmentRecord'
-import { addAppointment, getAppoinmentList } from 'src/controllers/hos-monitor/appointment'
+import {
+  addAppointment,
+  getAppoinmentList
+} from 'src/controllers/hos-monitor/appointment'
 import { validateReqHeaderToken } from 'src/middleware/index'
 
 import {
@@ -109,14 +112,17 @@ class Appointed {
 
     // 创建预约单
     const appointmentRecord = new AppointmentRecord()
-    appointmentRecord.userid = user?.userId as number
-    appointmentRecord.hoscode = hoscode
-    appointmentRecord.firstdepcode = firstcode
-    appointmentRecord.seconddepcode = secondcode
-    appointmentRecord.starttime = starttime
-    appointmentRecord.endtime = endtime
-    appointmentRecord.interval = interval
-    appointmentRecord.receive_email = receiveemail
+    if (user?.userId !== undefined) {
+      appointmentRecord.userid = user?.userId
+      appointmentRecord.hoscode = hoscode
+      appointmentRecord.firstdepcode = firstcode
+      appointmentRecord.seconddepcode = secondcode
+      appointmentRecord.starttime = starttime
+      appointmentRecord.endtime = endtime
+      appointmentRecord.interval = interval
+      appointmentRecord.receive_email = receiveemail
+    }
+
     // appointmentRecord.
     addAppointment(appointmentRecord)
       .then((val) => {

@@ -1,3 +1,9 @@
+import fs from 'fs'
+import path from 'path'
+import axios from 'axios'
+import chalk from 'chalk'
+import Utils from 'src/utils'
+
 /**
  * @file-desc: 挂号，监控到有号之后调用挂号，开始挂号
  * @author: huanghe
@@ -6,7 +12,9 @@
 /**
  * 获取某医院 某科室 某天的剩余号详情
  */
-const getDeptDetail = (): void => {}
+const getHosAndDeptDetail = (): void => {
+
+}
 
 /**
  * 判断用户是否实名

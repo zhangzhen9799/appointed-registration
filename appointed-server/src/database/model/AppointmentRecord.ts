@@ -7,7 +7,7 @@ export class AppointmentRecord {
   appointmentid: string
 
   @Column()
-  userid: number
+  userid: string
 
   @Column()
   hoscode: string

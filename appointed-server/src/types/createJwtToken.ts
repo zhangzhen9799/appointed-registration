@@ -1,5 +1,5 @@
 export interface JwtTokenPayloadType {
-  id: number
+  id: string
   name: string
   email: string
   created_at: Date
