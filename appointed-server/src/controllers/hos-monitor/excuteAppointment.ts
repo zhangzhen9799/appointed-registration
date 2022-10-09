@@ -3,30 +3,12 @@ import path from 'path'
 import axios from 'axios'
 import chalk from 'chalk'
 import _ from 'lodash'
-import tunnel from 'tunnel'
 
 import { setCookie } from '../../utils/Cookie'
 import { sendEmail } from '../../utils/common/sendEmail163'
 import { OrmDataSource } from '../../database/orm-data-source'
 import { AppointmentRecord } from '../../database/model/AppointmentRecord'
-
-// ipidea
-// const httpsAgent = tunnel.httpsOverHttp({
-//   proxy: {
-//     host: 'as.ipidea.io',
-//     port: 2333,
-//     proxyAuth: 'hhcol_98-zone-custom-region-hk:hh981109'
-//   }
-// })
-
-// https://http.py.cn/api/api_child/
-const httpsAgent = tunnel.httpsOverHttp({
-  proxy: {
-    host: '140.249.73.234',
-    port: 15002,
-    proxyAuth: 'hhcol:123456'
-  }
-})
+import HttpProxyConfig from '../../utils/common/httpProxy'
 
 interface msgType {
   addRecords?: AppointmentRecord[]
@@ -104,8 +86,7 @@ const getRegistrationDetails = (
       },
       {
         headers,
-        proxy: false,
-        httpsAgent
+        ...HttpProxyConfig
       }
     )
     .then((res: any) => {

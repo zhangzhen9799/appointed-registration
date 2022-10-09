@@ -65,4 +65,3 @@ export const getAppoinmentList = (userid: string): Promise<any> => {
     )
     .getRawMany()
 }
-
