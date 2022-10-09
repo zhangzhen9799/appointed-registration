@@ -139,6 +139,26 @@ const getPatientInfo = async (userid: string): Promise<void> => {
 }
 
 /**
+ * 就诊人授权 然后修改cookie
+ * https://www.114yygh.com/web/hospital/authority?_time=1665327795848&hosCode=H02110003
+ */
+
+const setAuthority = async (hosCode: string, userid: string): Promise<void> => {
+  const headers = getRequestHeadersByUserId(userid)
+  const res = await axios.get(
+    `https://www.114yygh.com/web/hospital/authority?_time=${Date.now()}&hosCode=${hosCode}`,
+    {
+      headers,
+      ...HttpProxyConfig
+    }
+  )
+  if (res.data.resCode === 0) {
+    setRequestHeadersByUserId(res, userid)
+    return res.data.data
+  }
+}
+
+/**
  * 提交挂号申请
  */
 
@@ -178,9 +198,12 @@ const saveAppointment = async (
       ...HttpProxyConfig
     }
   )
-  console.log('res', res)
   if (res.data.resCode === 0) {
-    console.log(res.data.data)
+    // console.log(res.data.data)
+    // res.data.data.orderNo  订单号
+    // 挂号成功
+    const orderNo = res.data.data.orderNo
+    return orderNo
   }
 }
 
@@ -201,6 +224,11 @@ const getAppointmentStatus = async (
       ...HttpProxyConfig
     }
   )
+
+  if (res.data.resCode === 0) {
+    console.log(res)
+    // 订单详情 res.data.data
+  }
   // 如果预约成功需要在数据库中记录
   // 发送邮件到个人 并抄送谷歌邮箱
 }
@@ -258,48 +286,58 @@ setTimeout(() => {
   // ).catch((err) => {
   //   throw new Error(err)
   // })
-  validateRealName('123')
-    .then(() => {
-      appointedConfirm(
-        '120',
-        'a660294efe4daaf0bcbff7d69225ce5b',
-        '200044340',
-        '2022-10-12',
-        '0',
-        '04043cfbb78c0a71cbd841592ec3cbc291842304',
-        '123'
-      )
-        .then(() => {
-          getPatientInfo('123')
-            .then(() => {
-              saveAppointment(
-                '411421199811092116',
-                'IDENTITY_CARD',
-                '120',
-                'a660294efe4daaf0bcbff7d69225ce5b',
-                '200044340',
-                '0',
-                '04043cfbb78c0a71cbd841592ec3cbc291842304',
-                'HOSP',
-                '17796761085',
-                '2022-10-12',
-                '',
-                '123'
-              ).catch((err) => {
-                throw new Error(err)
-              })
-            })
-            .catch((err) => {
-              throw new Error(err)
-            })
-        })
-        .catch((err) => {
-          throw new Error(err)
-        })
-    })
-    .catch((err) => {
-      throw new Error(err)
-    })
+  // validateRealName('123')
+  //   .then(() => {
+  //     appointedConfirm(
+  //       'H02110003',
+  //       '04',
+  //       '374',
+  //       '2022-10-11',
+  //       '0',
+  //       '5848e4282f6c54f00292c5602db02a2729988d31',
+  //       '123'
+  //     )
+  //       .then(() => {
+  //         getPatientInfo('123')
+  //           .then(() => {
+  //             setAuthority('H02110003', '123')
+  //               .then(() => {
+  //                 saveAppointment(
+  //                   '411421199811092116',
+  //                   'IDENTITY_CARD',
+  //                   'H02110003',
+  //                   '04',
+  //                   '374',
+  //                   '0',
+  //                   '5848e4282f6c54f00292c5602db02a2729988d31',
+  //                   'HOSP',
+  //                   '17796761085',
+  //                   '2022-10-11',
+  //                   '',
+  //                   '123'
+  //                 ).catch((err) => {
+  //                   throw new Error(err)
+  //                 })
+  //               })
+  //               .catch((err) => {
+  //                 throw new Error(err)
+  //               })
+  //           })
+  //           .catch((err) => {
+  //             throw new Error(err)
+  //           })
+  //       })
+  //       .catch((err) => {
+  //         throw new Error(err)
+  //       })
+  //   })
+  //   .catch((err) => {
+  //     throw new Error(err)
+  //   })
+
+  getAppointmentStatus('H02110003', '211075702521', '123').catch((err) => {
+    throw new Error(err)
+  })
 }, 1000)
 
 export default {}
