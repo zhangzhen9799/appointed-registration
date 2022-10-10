@@ -7,6 +7,9 @@ export class AppointmentSuccessRecord {
   id: string
 
   @Column()
+  userid: string
+
+  @Column()
   appointmentid: string
 
   @Column()
@@ -31,7 +34,16 @@ export class AppointmentSuccessRecord {
   service_fee: string
 
   @Column()
-  phone: string
+  patientPhone: string
+
+  @Column()
+  patientCardNo: string
+
+  @Column()
+  patientCardType: string
+
+  @Column()
+  receive_email: string
 
   @Column()
   order_number: string

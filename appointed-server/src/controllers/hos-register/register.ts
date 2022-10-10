@@ -9,8 +9,12 @@ import HttpProxyConfig from '../../utils/common/httpProxy'
 import { setCookie } from 'src/utils/Cookie'
 import { OrmDataSource } from '../../database/orm-data-source'
 import { AppointmentRecord } from 'src/database/model/AppointmentRecord'
+import { AppointmentSuccessRecord } from 'src/database/model/AppointmentSuccessRecord'
 
 const AppointmentRecordReposity = OrmDataSource.getRepository(AppointmentRecord)
+const AppointmentSuccessRecordReposity = OrmDataSource.getRepository(
+  AppointmentSuccessRecord
+)
 
 interface RestDoctorsType {
   dutyCode: string
@@ -361,7 +365,7 @@ const setRequestHeadersByUserId = (
 }
 
 /**
- * 获取预约单记录
+ * 获取预约单
  */
 
 const getAppointmentRecord = (
@@ -370,6 +374,19 @@ const getAppointmentRecord = (
   return AppointmentRecordReposity.createQueryBuilder('appointment')
     .where('appointment.appointmentid = :appointmentid', { appointmentid })
     .getOne()
+}
+
+/**
+ * 预约成功之后将预约成功记录入库
+ */
+const saveAppointmentSuccessRegister = async (
+  appointmentSuccessRecord: Partial<AppointmentRecord>
+): Promise<void> => {
+  await AppointmentRecordReposity.createQueryBuilder()
+    .insert()
+    .into(AppointmentSuccessRecord)
+    .values([appointmentSuccessRecord])
+    .execute()
 }
 
 /**
@@ -464,6 +481,29 @@ const register = async (
                 to: email,
                 text: '您在平台设定的挂号订单已经预约成功，请到114官方平台查看详情'
               })
+              const appointSuccessRecord = new AppointmentSuccessRecord()
+              appointSuccessRecord.userid = userid
+              appointSuccessRecord.appointmentid = appointmentid
+              appointSuccessRecord.doctor_name =
+                appointmentOrderDetail.orderBaseInfo.doctorName
+              appointSuccessRecord.doctor_title =
+                appointmentOrderDetail.orderBaseInfo.doctorTitle
+              appointSuccessRecord.patient_name =
+                appointmentOrderDetail.patientInfo.patientName
+              appointSuccessRecord.visit_time =
+                appointmentOrderDetail.orderBaseInfo.visitTimeTips
+              appointSuccessRecord.hos_name =
+                appointmentOrderDetail.orderBaseInfo.hosName
+              appointSuccessRecord.dep_name =
+                appointmentOrderDetail.orderBaseInfo.deptName
+              appointSuccessRecord.service_fee =
+                appointmentOrderDetail.orderBaseInfo.serviceFee
+              appointSuccessRecord.patientPhone = phone
+              appointSuccessRecord.patientCardNo = cardNo
+              appointSuccessRecord.patientCardType = cardType
+              appointSuccessRecord.receive_email = email
+              appointSuccessRecord.order_number = appointmentOrderDetail.orderNo
+              await saveAppointmentSuccessRegister(appointSuccessRecord)
             }
           } else {
             // 邮件通知 服务繁忙，请稍候重试
