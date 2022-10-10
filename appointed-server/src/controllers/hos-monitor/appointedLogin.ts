@@ -13,10 +13,11 @@ import { setCookie } from 'src/utils/Cookie'
  * 获取医院列表挂号接口
  */
 const headers = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../../constants/114Cookie.json'), 'utf-8')
+  fs.readFileSync(
+    path.join(__dirname, '../../constants/114Cookie.json'),
+    'utf-8'
+  )
 )
-
-let phone = ''
 
 /**
  * 获取登录图片验证码
@@ -55,73 +56,70 @@ const cryptoText = (text: string): string => {
 }
 
 /**
- * 校验图片验证码并发送短信
+ * 校验图片验证码
  */
-export const validatePhoneAndImageCode = async (code: string): Promise<any> => {
-  console.log('code==>', code)
-  return new Promise((resolve, reject): void => {
-    const timer = setTimeout(() => {
-      resolve('')
-      clearTimeout(timer)
-    }, 3000)
-  })
-    .then(() => {
-      return axios
-        .get(
-          `https://www.114yygh.com/web/checkcode?_time=${Date.now()}&code=${code}`,
-          {
-            headers
-          }
-        )
-        .then(async (res: any) => {
-          setCookie(res.headers['set-cookie'], headers)
-          console.log('res.data.data===>', res.data.data)
+export const validateImageCode = async (code: string): Promise<Boolean> => {
+  return axios
+    .get(
+      `https://www.114yygh.com/web/checkcode?_time=${Date.now()}&code=${code}`,
+      {
+        headers
+      }
+    )
+    .then(async (res: any) => {
+      setCookie(res.headers['set-cookie'], headers)
 
-          if (res.data.data === true) {
-            phone = await Utils.getPhoneNum()
-            console.log('获取到的临时手机号==>', phone)
-            const cipherPhone = cryptoText(phone)
-            console.log('cipherPhone==>', cipherPhone)
-            return axios
-              .get(
-                `https://www.114yygh.com/web/common/verify-code/get?_time=${Date.now()}&mobile=${encodeURIComponent(
-                  cipherPhone
-                )}&smsKey=LOGIN&code=${code}`,
-                {
-                  headers
-                }
-              )
-              .then((res: any) => {
-                setCookie(res.headers['set-cookie'], headers)
-                // 当前状态就是已经发送短信了，去查询短信验证码
-                console.log('===短信验证码发送成功====')
-                console.log(res.data)
-                console.log('此时phone==>', phone)
-                return Utils.getMessageByPhone(phone)
-                  .then((res) => {
-                    // console.log('短信信息==>', res.data)
-                    // 根据短信验证码去完成登录
-                    return res.data
-                  })
-                  .catch((err) => {
-                    throw new Error(err)
-                  })
-              })
-              .catch((err) => {
-                throw new Error(err)
-              })
-          } else {
-            // 大概率是图片验证码过期或者是识别失败
-            // 这里就可以做一个重新获取验证码，走重试逻辑
-            console.log('图片验证码验证失败，进行重试')
-            tmpLogin().catch((err) => {
-              throw new Error(err)
-            })
-          }
-        })
-        .catch((err) => {
-          throw new Error(err)
-        })
+      if (res.data.data === true) {
+        return true
+      } else {
+        // 大概率是图片验证码过期或者是识别失败
+        // 这里就可以做一个重新获取验证码，走重试逻辑
+        // console.log('图片验证码验证失败，进行重试')
+        // tmpLogin().catch((err) => {
+        //   throw new Error(err)
+        // })
+        return false
+      }
+    })
+    .catch((err) => {
+      throw new Error(err)
+    })
+}
+
+/**
+ * 获取临时手机号
+ */
+const getTmpPhone = async (): Promise<string> => {
+  const phone = await Utils.getPhoneNum()
+  return phone
+}
+
+/**
+ * 手机号和图片验证码 发送短信验证码
+ */
+
+const sendToPhoneTmpMsg = async (
+  phone: string,
+  imgCode: string
+): Promise<any> => {
+  // phone = await getTmpPhone()
+  const cipherPhone = cryptoText(phone)
+  console.log('cipherPhone==>', cipherPhone)
+  return axios
+    .get(
+      `https://www.114yygh.com/web/common/verify-code/get?_time=${Date.now()}&mobile=${encodeURIComponent(
+        cipherPhone
+      )}&smsKey=LOGIN&code=${imgCode}`,
+      {
+        headers
+      }
+    )
+    .then((res: any) => {
+      setCookie(res.headers['set-cookie'], headers)
+      // 当前状态就是已经发送短信了，去查询短信验证码
+      console.log('sendToPhoneTmpMsg====', res.data)
+      console.log('===短信验证码发送成功====')
+      console.log('此时phone==>', phone)
     })
     .catch((err) => {
       throw new Error(err)
@@ -184,13 +182,14 @@ export const tmpLogin = async (): Promise<void> => {
   const { data } = await getImageCode()
   const codeText = await distinguishImage(data)
   if (Array.isArray(/\d{4}/.exec(codeText))) {
-    const messageInfo = await validatePhoneAndImageCode(
-      (/\d{4}/.exec(codeText) as any[])[0]
-    )
-    // console.log(messageInfo)
-    if (messageInfo !== undefined) {
+    const imgCode = (/\d{4}/.exec(codeText) as any[])[0]
+    const validateImageCodeRes = await validateImageCode(imgCode)
+    if (validateImageCodeRes === true) {
+      const phone = await getTmpPhone()
+      await sendToPhoneTmpMsg(phone, imgCode)
+      const tmpMsgInfo = await Utils.getMessageByPhone(phone, 1000, 300)
       // 此时短信信息已经获取到
-      const regRes = /【(\w+)】/.exec(messageInfo.modle)
+      const regRes = /【(\w+)】/.exec(tmpMsgInfo.data.modle)
       if (regRes !== null) {
         const messCode = regRes[1]
         const res = await login114(phone, messCode)
@@ -204,6 +203,11 @@ export const tmpLogin = async (): Promise<void> => {
           }
         )
       }
+    } else {
+      console.log(chalk.green('图片验证码验证失败....开始重试'))
+      tmpLogin().catch((err) => {
+        throw new Error(err)
+      })
     }
   } else {
     // 重试获取图片验证码
@@ -214,10 +218,6 @@ export const tmpLogin = async (): Promise<void> => {
   }
 }
 
-// tmpLogin().catch((err) => {
-//   throw new Error(err)
-// })
-
-/**
- *
- */
+tmpLogin().catch((err) => {
+  throw new Error(err)
+})

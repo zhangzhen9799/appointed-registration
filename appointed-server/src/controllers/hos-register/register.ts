@@ -3,13 +3,13 @@ import fs from 'fs'
 import path from 'path'
 import axios from 'axios'
 import chalk from 'chalk'
-import Utils from 'src/utils'
-import { ReqHeadersType } from 'src/types/commonType'
+import Utils from '../../utils'
+import { ReqHeadersType } from '../../types/commonType'
 import HttpProxyConfig from '../../utils/common/httpProxy'
-import { setCookie } from 'src/utils/Cookie'
+import { setCookie } from '../../utils/Cookie'
 import { OrmDataSource } from '../../database/orm-data-source'
-import { AppointmentRecord } from 'src/database/model/AppointmentRecord'
-import { AppointmentSuccessRecord } from 'src/database/model/AppointmentSuccessRecord'
+import { AppointmentRecord } from '../../database/model/AppointmentRecord'
+import { AppointmentSuccessRecord } from '../../database/model/AppointmentSuccessRecord'
 
 const AppointmentRecordReposity = OrmDataSource.getRepository(AppointmentRecord)
 const AppointmentSuccessRecordReposity = OrmDataSource.getRepository(
