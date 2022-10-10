@@ -9,6 +9,7 @@ import { sendEmail } from '../../utils/common/sendEmail163'
 import { OrmDataSource } from '../../database/orm-data-source'
 import { AppointmentRecord } from '../../database/model/AppointmentRecord'
 import HttpProxyConfig from '../../utils/common/httpProxy'
+import userRegister from '../hos-register/register'
 
 interface msgType {
   addRecords?: AppointmentRecord[]
@@ -153,16 +154,15 @@ export const excuteAppointment = async (
   // 每一项中的status为 "AVAILABLE" 表示当天还有号
   const userSetStartTime = new Date(params.starttime).getTime()
   const userSetEndTime = new Date(params.endtime).getTime()
-  if (
-    resultList.some((item: any) => {
-      const dutyDateTime = new Date(item.dutyDate).getTime()
-      return (
-        dutyDateTime >= userSetStartTime &&
-        dutyDateTime <= userSetEndTime &&
-        item.status === 'AVAILABLE'
-      )
-    })
-  ) {
+  const restList = resultList.filter((item: any) => {
+    const dutyDateTime = new Date(item.dutyDate).getTime()
+    return (
+      dutyDateTime >= userSetStartTime &&
+      dutyDateTime <= userSetEndTime &&
+      item.status === 'AVAILABLE'
+    )
+  })
+  if (restList.length > 0) {
     if (searchTM.taskIns[params.appointmentid].timer !== null) {
       console.log(chalk.green('监控平台提醒您，当前订单检测有号可以预约'))
       // 把监控的定时器清除
@@ -172,6 +172,17 @@ export const excuteAppointment = async (
         subject: '114监控平台',
         text: '监控平台提醒您，您预约的{医院}-{科室}-{时间段}，现在有号可约，抓紧时间来预约挂号吧！！！'
       })
+
+      await userRegister.register(
+        params.hoscode,
+        params.firstdepcode,
+        params.seconddepcode,
+        restList[0].dutyDate,
+        '0',
+        (item: any) => item,
+        params.appointmentid,
+        params.userid
+      )
     }
   }
 }
