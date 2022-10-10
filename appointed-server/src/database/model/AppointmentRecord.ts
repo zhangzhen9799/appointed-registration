@@ -35,4 +35,13 @@ export class AppointmentRecord {
 
   @Column()
   endtime: Date
+
+  @Column()
+  patientPhone: string
+
+  @Column()
+  patientCardNo: string
+
+  @Column()
+  patientCardType: string
 }

@@ -7,6 +7,99 @@ import Utils from 'src/utils'
 import { ReqHeadersType } from 'src/types/commonType'
 import HttpProxyConfig from '../../utils/common/httpProxy'
 import { setCookie } from 'src/utils/Cookie'
+import { OrmDataSource } from '../../database/orm-data-source'
+import { AppointmentRecord } from 'src/database/model/AppointmentRecord'
+
+const AppointmentRecordReposity = OrmDataSource.getRepository(AppointmentRecord)
+
+interface RestDoctorsType {
+  dutyCode: string
+  dutyImgUrl: string
+  detail: RestDoctorDetailType[]
+  showIndexPosition: number
+  showNumber: Boolean
+  showPrice: Boolean
+}
+interface RestDoctorDetailType {
+  uniqProductKey: string
+  doctorName: string
+  doctorTitleName: string
+  skill: string
+  period: any[]
+  fcode: string
+  ncode: string
+  wnumber: number
+  znumber: number
+}
+
+interface AppointedConfirmType {
+  uniqProductKey: string
+  hospitalName: string
+  departmentName: string
+  doctorName: string
+  doctorTitleName: string
+  skill: string
+  visitTime: string
+  totalFee: string
+  serviceFee: string
+  showFee: Boolean
+  needRemoteHospitalCard: Boolean
+  dataItem: {
+    hospitalCardId: number
+    hospitalCardIdTip: null
+    jytCardId: number
+    jytCardIdTip: null
+    smsCode: number
+    smsCodeTip: null
+    contactUserInfo: number
+  }
+  commonRegisterNotice: null
+  dutyImgUrl: string
+  showRegRule: null
+  takePlaceTips: string
+}
+
+interface AppointedOrderType {
+  orderNo: string
+  identifyingCode: string
+  orderStatus: string
+  orderStatusView: string
+  orderType: string
+  orderTime: null
+  canCancel: Boolean
+  cancelType: null
+  cancelTime: null
+  orderBaseInfo: {
+    hosCode: string
+    hosName: string
+    deptCode: string
+    deptName: string
+    doctorName: string
+    doctorTitle: string
+    doctorSkill: string
+    serviceFee: string
+    visitTimeTips: string
+    takeTimeTips: string
+    takePlaceTips: string
+    cancelTimeTips: string
+    attention: null
+    periodView: string
+    dutyDate: string
+    qrTipMessage: null
+    qrCodeImg: null
+  }
+  patientInfo: {
+    patientName: string
+    patientIdType: null
+    patientIdNo: null
+    cardType: string
+    cardTypeView: string
+    cardNo: string
+    medicareType: null
+    medicareTypeView: null
+  }
+  payInfo: null
+}
 
 /**
  * @file-desc: 挂号，监控到有号之后调用挂号，开始挂号， 本文件中请求均需要挂代理进行操作
@@ -15,6 +108,7 @@ import { setCookie } from 'src/utils/Cookie'
 
 /**
  * 获取某医院 某科室 某天的剩余号详情
+ * 返回剩余号，如果返回数组为空，则表示已经无号
  */
 const getHosAndDeptDetail = async (
   hosCode: string,
@@ -22,7 +116,7 @@ const getHosAndDeptDetail = async (
   secondDeptCode: string,
   target: string,
   userid: string
-): Promise<void> => {
+): Promise<RestDoctorsType[] | Boolean> => {
   const headers = getRequestHeadersByUserId(userid)
   const params = {
     hosCode,
@@ -50,10 +144,10 @@ const getHosAndDeptDetail = async (
       })
       return item
     })
-    // console.log(result)
     return result
   }
   // wnumber 为奇数表示还有余号 应用层面对剩余几个号不关注
+  return false
 }
 
 /**
@@ -94,7 +188,7 @@ const appointedConfirm = async (
   dutyTime: string,
   uniqProductKey: string,
   userid: string
-): Promise<void> => {
+): Promise<AppointedConfirmType | Boolean> => {
   const headers = getRequestHeadersByUserId(userid)
   const params = {
     hosCode,
@@ -117,10 +211,12 @@ const appointedConfirm = async (
     setRequestHeadersByUserId(res, userid)
     return res.data.data
   }
+  return false
 }
 
 /**
  * 获取就诊人信息  主要获取就诊人的卡
+ * 接口前置，在用户登录过程中，就获取就诊人信息，提供用户选择，我们在库中保存即可
  */
 
 const getPatientInfo = async (userid: string): Promise<void> => {
@@ -175,7 +271,7 @@ const saveAppointment = async (
   treatmentDay: string,
   smsCode: string,
   userid: string
-): Promise<void> => {
+): Promise<String | Boolean> => {
   const headers = getRequestHeadersByUserId(userid)
   const params = {
     cardNo,
@@ -205,17 +301,18 @@ const saveAppointment = async (
     const orderNo = res.data.data.orderNo
     return orderNo
   }
+  return false
 }
 
 /**
- * 查看预约是否成功
+ * 查看预约订单详情
  */
 
-const getAppointmentStatus = async (
+const getAppointmentOrderDetail = async (
   hosCode: string,
   orderNo: string,
   userid: string
-): Promise<void> => {
+): Promise<AppointedOrderType | boolean> => {
   const headers = getRequestHeadersByUserId(userid)
   const res = await axios.get(
     `https://www.114yygh.com/web/order/detail?_time=${Date.now()}&hosCode=${hosCode}&orderNo=${orderNo}`,
@@ -226,9 +323,11 @@ const getAppointmentStatus = async (
   )
 
   if (res.data.resCode === 0) {
-    console.log(res)
+    // console.log(res.data)
+    return res.data.data
     // 订单详情 res.data.data
   }
+  return false
   // 如果预约成功需要在数据库中记录
   // 发送邮件到个人 并抄送谷歌邮箱
 }
@@ -262,6 +361,18 @@ const setRequestHeadersByUserId = (
 }
 
 /**
+ * 获取预约单记录
+ */
+
+const getAppointmentRecord = (
+  appointmentid: string
+): Promise<AppointmentRecord | null> => {
+  return AppointmentRecordReposity.createQueryBuilder('appointment')
+    .where('appointment.appointmentid = :appointmentid', { appointmentid })
+    .getOne()
+}
+
+/**
  *
  * 对用户个体，我们页面上提供输入短信验证码登录入口（页面只需要输入手机号即可，代码执行图片验证码认证机制，然后通过重试轮询检测用户提交的短信验证码）
  * 验证成功之后我们给用户操作登录，并将此用户的请求头信息 进行保存
@@ -276,68 +387,97 @@ const setRequestHeadersByUserId = (
  *  7. 或者在前端页面上加上是否排除专家号 还是只预约专家号 后端通过正则进行判断
  *  8. 前端页面加上用户选择什么卡挂号 身份证或者是社保卡
  */
-setTimeout(() => {
-  // getHosAndDeptDetail(
-  //   '120',
-  //   'a660294efe4daaf0bcbff7d69225ce5b',
-  //   '200044340',
-  //   '2022-10-10',
-  //   '123'
-  // ).catch((err) => {
-  //   throw new Error(err)
-  // })
-  // validateRealName('123')
-  //   .then(() => {
-  //     appointedConfirm(
-  //       'H02110003',
-  //       '04',
-  //       '374',
-  //       '2022-10-11',
-  //       '0',
-  //       '5848e4282f6c54f00292c5602db02a2729988d31',
-  //       '123'
-  //     )
-  //       .then(() => {
-  //         getPatientInfo('123')
-  //           .then(() => {
-  //             setAuthority('H02110003', '123')
-  //               .then(() => {
-  //                 saveAppointment(
-  //                   '411421199811092116',
-  //                   'IDENTITY_CARD',
-  //                   'H02110003',
-  //                   '04',
-  //                   '374',
-  //                   '0',
-  //                   '5848e4282f6c54f00292c5602db02a2729988d31',
-  //                   'HOSP',
-  //                   '17796761085',
-  //                   '2022-10-11',
-  //                   '',
-  //                   '123'
-  //                 ).catch((err) => {
-  //                   throw new Error(err)
-  //                 })
-  //               })
-  //               .catch((err) => {
-  //                 throw new Error(err)
-  //               })
-  //           })
-  //           .catch((err) => {
-  //             throw new Error(err)
-  //           })
-  //       })
-  //       .catch((err) => {
-  //         throw new Error(err)
-  //       })
-  //   })
-  //   .catch((err) => {
-  //     throw new Error(err)
-  //   })
 
-  // getAppointmentStatus('H02110003', '211075702521', '123').catch((err) => {
-  //   throw new Error(err)
-  // })
-}, 1000)
+const register = async (
+  hosCode: string,
+  firstDeptCode: string,
+  secondDeptCode: string,
+  target: string,
+  dutyTime: string,
+  filterCallback: (restDoctorItem: RestDoctorsType) => RestDoctorsType[],
+  appointmentid: string,
+  userid: string
+): Promise<void> => {
+  const restDoctors = await getHosAndDeptDetail(
+    hosCode,
+    firstDeptCode,
+    secondDeptCode,
+    target,
+    userid
+  )
+  // 有余号的医生
+  if (Array.isArray(restDoctors) && restDoctors.length > 0) {
+    // 根据条件选中一个医生
+    const uniqProductKey =
+      restDoctors.filter(filterCallback)[0].detail[0].uniqProductKey
+    const validateRealNameResult = await validateRealName(userid)
+    // 验证用户实名成功
+    if (validateRealNameResult === true) {
+      const appointedConfirmRes = await appointedConfirm(
+        hosCode,
+        firstDeptCode,
+        secondDeptCode,
+        target,
+        dutyTime,
+        uniqProductKey,
+        userid
+      )
+      if (typeof appointedConfirmRes === 'object') {
+        // 此时需要预约的详情已有 可以提醒用户正在挂号
+        await setAuthority(hosCode, userid)
+        // 查库获取用户选择的挂号证件
+        const appointmentInfo = await getAppointmentRecord(appointmentid)
+        if (appointmentInfo !== null) {
+          const cardNo = appointmentInfo.patientCardNo
+          const cardType = appointmentInfo.patientCardType
+          const phone = appointmentInfo.patientPhone
+          const email = appointmentInfo.receive_email
 
-export default {}
+          const saveAppointmentRes = await saveAppointment(
+            cardNo,
+            cardType,
+            hosCode,
+            firstDeptCode,
+            secondDeptCode,
+            dutyTime,
+            uniqProductKey,
+            'HOSP',
+            phone,
+            target,
+            '',
+            userid
+          )
+          if (
+            typeof saveAppointmentRes === 'string' &&
+            saveAppointmentRes !== ''
+          ) {
+            const appointmentOrderDetail = await getAppointmentOrderDetail(
+              hosCode,
+              saveAppointmentRes,
+              userid
+            )
+            if (typeof appointmentOrderDetail !== 'boolean') {
+              // 预约成功，发送邮件给用户 提醒用户预约抢号成功
+              // 并提醒用户
+              // 并祝福用户健康每一天
+              await Utils.sendEmail({
+                to: email,
+                text: '您在平台设定的挂号订单已经预约成功，请到114官方平台查看详情'
+              })
+            }
+          } else {
+            // 邮件通知 服务繁忙，请稍候重试
+            await Utils.sendEmail({
+              to: email,
+              text: '服务繁忙，请稍候重试, 您可以尝试在平台重新登录您的114账号'
+            })
+          }
+        }
+      }
+    }
+  }
+}
+
+export default {
+  register
+}
