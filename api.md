@@ -280,8 +280,17 @@
       }
    ```
 
+12. 授权就诊人信息
+   https://www.114yygh.com/web/hospital/authority?_time=${Date.now()}&hosCode={hosCode}
+   Method: GET
+   鉴权: Cookie
 
-12. 提交挂号申请
+   | 参数           | 类型   | 默认值    | 含义                                                                                           |
+   | -------------- | ------ | --------- | ---------------------------------------------------------------------------------------------- |
+   | _time  | date | --| 时间戳 |
+   | hosCode| string | ---- | 医院code |
+
+13. 提交挂号申请
    https://www.114yygh.com/web/order/save?_time={Date.now()}
    Method: POST
    鉴权: Cookie
@@ -312,7 +321,7 @@
       // 如果data 不为null 请求13接口，并将13接口的返回值发邮件给用户
    ```
 
-13. 查询预约是否成功
+14. 查询预约是否成功
    https://www.114yygh.com/web/order/detail?_time={Date.now()}&hosCode={hosCode}&orderNo={orderNo}
    Method: GET
    鉴权: Cookie

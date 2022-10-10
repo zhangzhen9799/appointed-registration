@@ -335,9 +335,9 @@ setTimeout(() => {
   //     throw new Error(err)
   //   })
 
-  getAppointmentStatus('H02110003', '211075702521', '123').catch((err) => {
-    throw new Error(err)
-  })
+  // getAppointmentStatus('H02110003', '211075702521', '123').catch((err) => {
+  //   throw new Error(err)
+  // })
 }, 1000)
 
 export default {}
