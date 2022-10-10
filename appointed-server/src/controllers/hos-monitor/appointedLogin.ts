@@ -187,13 +187,14 @@ export const tmpLogin = async (): Promise<void> => {
     if (validateImageCodeRes === true) {
       const phone = await getTmpPhone()
       await sendToPhoneTmpMsg(phone, imgCode)
-      const tmpMsgInfo = await Utils.getMessageByPhone(phone, 1000, 300)
+      const tmpMsgInfo = await Utils.getMessageByPhone(phone)
+      console.log('tmpMsgInfo===', tmpMsgInfo)
       // 此时短信信息已经获取到
-      const regRes = /【(\w+)】/.exec(tmpMsgInfo.data.modle)
+      const regRes = /【(\w+)】/.exec(tmpMsgInfo.modle)
       if (regRes !== null) {
         const messCode = regRes[1]
         const res = await login114(phone, messCode)
-        // console.log(res)
+        console.log(chalk.green('114平台登录成功...'))
         // 保存请求头到文件中, 方便第二次使用
         fs.writeFileSync(
           path.join(__dirname, '../../constants/114Cookie.json'),

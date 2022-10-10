@@ -43,6 +43,13 @@ export const getMessageByPhone = (
     wait,
     retryCount
   )
+    .then((res: any) => {
+      return res.data
+    })
+    .catch(async (err) => {
+      console.log('getMessageByPhone=====', err)
+      await addPhoneBlacklist(phone)
+    })
 }
 
 /**
@@ -63,6 +70,7 @@ export const addPhoneBlacklist = (phone: string): Promise<void> => {
 
 // 手机收到的短信信息是否符合预期
 const validateMessageExpect = (res: any): boolean => {
+  console.log('validateMessageExpect====', res.data)
   if (res.data?.code !== '') {
     return true
   } else {

@@ -16,8 +16,8 @@ export const asyncTaskRetry = (
     relayCount > 1 &&
       console.log(chalk.green(`正在重试异步任务第${relayCount}次....`))
     return new Promise((resolve) => {
-      setTimeout(() => {
-        clearTimeout(wait)
+      const timer = setTimeout(() => {
+        clearTimeout(timer)
         resolve('')
       }, wait)
     }).then(() => {
