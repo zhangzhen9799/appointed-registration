@@ -105,7 +105,10 @@ class Appointed {
       starttime,
       endtime,
       interval,
-      receiveemail
+      receiveemail,
+      patientPhone,
+      patientCardNo,
+      patientCardType
     } = req.body
     const { email } = Utils.getUserInfoByToken(
       (req.get('Authorization') as string).split(' ')[1]
@@ -125,6 +128,9 @@ class Appointed {
       appointmentRecord.endtime = endtime
       appointmentRecord.interval = interval
       appointmentRecord.receive_email = receiveemail
+      appointmentRecord.patientPhone = patientPhone
+      appointmentRecord.patientCardNo = patientCardNo
+      appointmentRecord.patientCardType = patientCardType
     }
 
     // appointmentRecord.
