@@ -10,6 +10,10 @@ import { setCookie } from '../../utils/Cookie'
 import { OrmDataSource } from '../../database/orm-data-source'
 import { AppointmentRecord } from '../../database/model/AppointmentRecord'
 import { AppointmentSuccessRecord } from '../../database/model/AppointmentSuccessRecord'
+import {
+  getRequestHeadersByUserId,
+  setRequestHeadersByUserId
+} from '../../utils/common/requestHeader114'
 
 const AppointmentRecordReposity = OrmDataSource.getRepository(AppointmentRecord)
 const AppointmentSuccessRecordReposity = OrmDataSource.getRepository(
@@ -170,7 +174,7 @@ const validateRealName = async (userid: string): Promise<Boolean> => {
   if (res.data.resCode === 0) {
     // 实名认证通过   status === "AUTH_PASS" 表明实名认证通过
     if (res.data.data.status === 'AUTH_PASS') {
-      setRequestHeadersByUserId(res, userid)
+      setRequestHeadersByUserId(res.headers, userid)
       return true
     } else {
       return false
@@ -212,7 +216,7 @@ const appointedConfirm = async (
   )
   if (res.data.resCode === 0) {
     // console.log(res.data.data)
-    setRequestHeadersByUserId(res, userid)
+    setRequestHeadersByUserId(res.headers, userid)
     return res.data.data
   }
   return false
@@ -233,7 +237,7 @@ const getPatientInfo = async (userid: string): Promise<void> => {
     }
   )
   if (res.data.resCode === 0) {
-    setRequestHeadersByUserId(res, userid)
+    setRequestHeadersByUserId(res.headers, userid)
     return res.data.data.list
   }
 }
@@ -253,7 +257,7 @@ const setAuthority = async (hosCode: string, userid: string): Promise<void> => {
     }
   )
   if (res.data.resCode === 0) {
-    setRequestHeadersByUserId(res, userid)
+    setRequestHeadersByUserId(res.headers, userid)
     return res.data.data
   }
 }
@@ -334,34 +338,6 @@ const getAppointmentOrderDetail = async (
   return false
   // 如果预约成功需要在数据库中记录
   // 发送邮件到个人 并抄送谷歌邮箱
-}
-
-/**
- * 根据userid 匹配请求头
- */
-const getRequestHeadersByUserId = (userid: string): ReqHeadersType => {
-  return JSON.parse(
-    fs.readFileSync(
-      path.join(__dirname, `../../constants/usersCookie/${userid}.json`),
-      'utf-8'
-    )
-  )
-}
-
-const setRequestHeadersByUserId = (
-  res: any,
-  userid: string
-): ReqHeadersType => {
-  const headers = getRequestHeadersByUserId(userid)
-  setCookie(res.headers['set-cookie'], headers)
-  fs.writeFileSync(
-    path.join(__dirname, `../../constants/usersCookie/${userid}.json`),
-    JSON.stringify(headers),
-    {
-      encoding: 'utf8'
-    }
-  )
-  return headers
 }
 
 /**

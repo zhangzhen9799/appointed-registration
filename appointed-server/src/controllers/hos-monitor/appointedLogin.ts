@@ -8,21 +8,16 @@ import CryptoJS from 'crypto-js'
 import Utils from 'src/utils'
 
 import { setCookie } from 'src/utils/Cookie'
-
-/**
- * 获取医院列表挂号接口
- */
-const headers = JSON.parse(
-  fs.readFileSync(
-    path.join(__dirname, '../../constants/114Cookie.json'),
-    'utf-8'
-  )
-)
+import {
+  getRequestHeadersByUserId,
+  setRequestHeadersByUserId
+} from 'src/utils/common/requestHeader114'
+import { ReqHeadersType } from '../../types/commonType'
 
 /**
  * 获取登录图片验证码
  */
-export const getImageCode = (): Promise<any> => {
+export const getImageCode = (headers: ReqHeadersType): Promise<any> => {
   return axios
     .get(`https://www.114yygh.com/web/img/getImgCode?_time=${Date.now()}`, {
       headers,
@@ -58,7 +53,10 @@ const cryptoText = (text: string): string => {
 /**
  * 校验图片验证码
  */
-export const validateImageCode = async (code: string): Promise<Boolean> => {
+export const validateImageCode = async (
+  code: string,
+  headers: ReqHeadersType
+): Promise<Boolean> => {
   return axios
     .get(
       `https://www.114yygh.com/web/checkcode?_time=${Date.now()}&code=${code}`,
@@ -100,7 +98,8 @@ const getTmpPhone = async (): Promise<string> => {
 
 const sendToPhoneTmpMsg = async (
   phone: string,
-  imgCode: string
+  imgCode: string,
+  headers: ReqHeadersType
 ): Promise<any> => {
   // phone = await getTmpPhone()
   const cipherPhone = cryptoText(phone)
@@ -129,7 +128,11 @@ const sendToPhoneTmpMsg = async (
 /**
  * 根据短信验证码 + 手机号完成登录
  */
-export const login114 = (mobile: string, code: string): Promise<any> => {
+export const login114 = (
+  mobile: string,
+  code: string,
+  headers: ReqHeadersType
+): Promise<any> => {
   return axios
     .post(
       `https://www.114yygh.com/web/login?_time=${Date.now()}`,
@@ -179,21 +182,22 @@ export const distinguishImage = async (
  * 临时登录
  */
 export const tmpLogin = async (): Promise<void> => {
-  const { data } = await getImageCode()
+  const headers = getRequestHeadersByUserId()
+  const { data } = await getImageCode(headers)
   const codeText = await distinguishImage(data)
   if (Array.isArray(/\d{4}/.exec(codeText))) {
     const imgCode = (/\d{4}/.exec(codeText) as any[])[0]
-    const validateImageCodeRes = await validateImageCode(imgCode)
+    const validateImageCodeRes = await validateImageCode(imgCode, headers)
     if (validateImageCodeRes === true) {
       const phone = await getTmpPhone()
-      await sendToPhoneTmpMsg(phone, imgCode)
+      await sendToPhoneTmpMsg(phone, imgCode, headers)
       const tmpMsgInfo = await Utils.getMessageByPhone(phone)
       console.log('tmpMsgInfo===', tmpMsgInfo)
       // 此时短信信息已经获取到
       const regRes = /【(\w+)】/.exec(tmpMsgInfo.modle)
       if (regRes !== null) {
         const messCode = regRes[1]
-        const res = await login114(phone, messCode)
+        const res = await login114(phone, messCode, headers)
         console.log(chalk.green('114平台登录成功...'))
         // 保存请求头到文件中, 方便第二次使用
         fs.writeFileSync(
@@ -219,6 +223,53 @@ export const tmpLogin = async (): Promise<void> => {
   }
 }
 
-tmpLogin().catch((err) => {
+/**
+ * 用户登录-发送短信验证码
+ */
+export const userLoginSendMsg = async (
+  phone: string,
+  userid: string
+): Promise<void> => {
+  const headers = getRequestHeadersByUserId(userid)
+  const { data } = await getImageCode(headers)
+  const codeText = await distinguishImage(data)
+  if (Array.isArray(/\d{4}/.exec(codeText))) {
+    const imgCode = (/\d{4}/.exec(codeText) as any[])[0]
+    const validateImageCodeRes = await validateImageCode(imgCode, headers)
+    if (validateImageCodeRes === true) {
+      await sendToPhoneTmpMsg(phone, imgCode, headers)
+      setRequestHeadersByUserId(headers, userid)
+    } else {
+      console.log(chalk.green('图片验证码验证失败....开始重试'))
+      userLoginSendMsg(phone, userid).catch((err) => {
+        throw new Error(err)
+      })
+    }
+  } else {
+    // 重试获取图片验证码
+    console.log(chalk.green('图片验证码验证失败....开始重试'))
+    userLoginSendMsg(phone, userid).catch((err) => {
+      throw new Error(err)
+    })
+  }
+}
+
+/**
+ * 用户登录-提交短信验证码
+ */
+
+export const userLoginPhone = async (
+  phone: string,
+  smscode: string,
+  userid: string
+): Promise<void> => {
+  const headers = getRequestHeadersByUserId(userid)
+  await login114(phone, smscode, headers)
+  console.log(chalk.green('114平台登录成功...'))
+  // 保存请求头到文件中, 方便第二次使用
+  setRequestHeadersByUserId(headers, userid)
+}
+
+userLoginSendMsg('17796761085', '17796761085').catch((err) => {
   throw new Error(err)
 })
