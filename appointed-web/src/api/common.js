@@ -25,3 +25,18 @@ export const postAppointmentRecordAPI = (params) => {
 export const getAppointmentListAPI = (params) => {
   return get('/114/get-appointment-list');
 };
+
+// 发送114平台登录验证码
+export const send114smsCodeAPI = (params) => {
+  return post('/114/user-phone-send-msg', params);
+};
+
+// 登录114平台
+export const login114ByPhoneAPI = (params) => {
+  return post('/114/user-phone-login', params);
+};
+
+// 获取就诊人信息
+export const getPatientInfoAPI = (params) => {
+  return post('/114/user-get-patient-info', params);
+};

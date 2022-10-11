@@ -22,6 +22,8 @@ import {
   getDepListByHosCode
 } from 'src/controllers/hos-monitor/getHosAndDepList'
 
+import { getPatientInfoHandle } from 'src/controllers/hos-register/register'
+
 import { OrmDataSource } from 'src/database/orm-data-source'
 import { User } from 'src/database/model/User'
 const UserReposity = OrmDataSource.getRepository(User)
@@ -181,7 +183,7 @@ class Appointed {
       userLoginSendMsg(phone as string, userId)
         .then((val) => {
           Utils.response(res, {
-            success: 'true',
+            success: true,
             msg: '发送成功，请稍候查看手机短信验证码'
           })
         })
@@ -208,7 +210,7 @@ class Appointed {
       userLoginPhone(phone as string, code, userId)
         .then((val) => {
           Utils.response(res, {
-            success: 'true',
+            success: true,
             msg: '114平台登录成功'
           })
         })
@@ -217,6 +219,36 @@ class Appointed {
         })
     } else {
       Utils.response(res, null, 404, '114平台登录失败，请稍候重试')
+    }
+  }
+
+  @Utils.Post('/user-get-patient-info')
+  @Utils.Use([validateReqHeaderToken])
+  async getPatientInfo(req: Request, res: Response): Promise<void> {
+    const { email } = Utils.getUserInfoByToken(
+      (req.get('Authorization') as string).split(' ')[1]
+    )
+    const user = await UserReposity.findOneBy({
+      email
+    })
+    const userId = user?.userId
+    if (userId !== undefined) {
+      getPatientInfoHandle(userId)
+        .then((val) => {
+          Utils.response(
+            res,
+            {
+              data: val
+            },
+            200,
+            '查找就诊人信息成功'
+          )
+        })
+        .catch((err) => {
+          Utils.response(res, err, 404, '查找就诊人信息失败')
+        })
+    } else {
+      Utils.response(res, null, 404, '查找就诊人信息失败')
     }
   }
 }

@@ -109,6 +109,27 @@ interface AppointedOrderType {
   payInfo: null
 }
 
+interface PatientInfoType {
+  patientName: string
+  idCardType: string
+  idCardTypeView: string
+  idCardNo: string
+  idCardNoView: string
+  phone: string
+  status: string
+  statusTips: string
+  cardList: PatientInfoCardType[]
+}
+
+interface PatientInfoCardType {
+  cardType: string
+  cardTypeView: string
+  cardNo: string
+  cardNoView: string
+  medicareType: string
+  medicareTypeView: string
+}
+
 /**
  * @file-desc: 挂号，监控到有号之后调用挂号，开始挂号， 本文件中请求均需要挂代理进行操作
  * @author: huanghe
@@ -227,7 +248,9 @@ const appointedConfirm = async (
  * 接口前置，在用户登录过程中，就获取就诊人信息，提供用户选择，我们在库中保存即可
  */
 
-const getPatientInfo = async (userid: string): Promise<void> => {
+export const getPatientInfoHandle = async (
+  userid: string
+): Promise<PatientInfoType[]> => {
   const headers = getRequestHeadersByUserId(userid)
   const res = await axios.get(
     `https://www.114yygh.com/web/patient/list?_time=${Date.now()}&showType=ORDER_CONFIRM`,
@@ -236,9 +259,12 @@ const getPatientInfo = async (userid: string): Promise<void> => {
       ...HttpProxyConfig
     }
   )
+  console.log('getPatientInfoHandle', res.data)
   if (res.data.resCode === 0) {
     setRequestHeadersByUserId(res.headers, userid)
     return res.data.data.list
+  } else {
+    return []
   }
 }
 
