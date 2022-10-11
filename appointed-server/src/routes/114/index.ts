@@ -1,7 +1,11 @@
 import { Request, Response } from 'express'
 
 import Utils from 'src/utils'
-import { tmpLogin } from 'src/controllers/hos-monitor/appointedLogin'
+import {
+  tmpLogin,
+  userLoginSendMsg,
+  userLoginPhone
+} from 'src/controllers/hos-monitor/appointedLogin'
 import {
   setAllHosListToSqlAsync,
   setAllDepartListToSqlAsync
@@ -153,6 +157,60 @@ class Appointed {
         })
     } else {
       Utils.response(res, null, 404, '查找预约列表失败，未知错误')
+    }
+  }
+
+  @Utils.Post('/user-phone-send-msg')
+  @Utils.Use([validateReqHeaderToken])
+  async userLoginSendMsg(req: Request, res: Response): Promise<void> {
+    const { email } = Utils.getUserInfoByToken(
+      (req.get('Authorization') as string).split(' ')[1]
+    )
+    const user = await UserReposity.findOneBy({
+      email
+    })
+    const userId = user?.userId
+    const { phone } = req.body
+    if (userId !== undefined) {
+      userLoginSendMsg(phone as string, userId)
+        .then((val) => {
+          Utils.response(res, {
+            success: 'true',
+            msg: '发送成功，请稍候查看手机短信验证码'
+          })
+        })
+        .catch((err) => {
+          Utils.response(res, err, 404, '发送验证码失败，请稍候重试')
+        })
+    } else {
+      Utils.response(res, null, 404, '发送验证码失败，请稍候重试')
+    }
+  }
+
+  @Utils.Post('/user-phone-login')
+  @Utils.Use([validateReqHeaderToken])
+  async userPhoneLogin(req: Request, res: Response): Promise<void> {
+    const { email } = Utils.getUserInfoByToken(
+      (req.get('Authorization') as string).split(' ')[1]
+    )
+    const user = await UserReposity.findOneBy({
+      email
+    })
+    const userId = user?.userId
+    const { phone, code } = req.body
+    if (userId !== undefined) {
+      userLoginPhone(phone as string, code, userId)
+        .then((val) => {
+          Utils.response(res, {
+            success: 'true',
+            msg: '114平台登录成功'
+          })
+        })
+        .catch((err) => {
+          Utils.response(res, err, 404, '114平台登录失败，请稍候重试')
+        })
+    } else {
+      Utils.response(res, null, 404, '114平台登录失败，请稍候重试')
     }
   }
 }

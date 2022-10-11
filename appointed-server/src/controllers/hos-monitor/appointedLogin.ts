@@ -229,7 +229,7 @@ export const tmpLogin = async (): Promise<void> => {
 export const userLoginSendMsg = async (
   phone: string,
   userid: string
-): Promise<void> => {
+): Promise<Boolean> => {
   const headers = getRequestHeadersByUserId(userid)
   const { data } = await getImageCode(headers)
   const codeText = await distinguishImage(data)
@@ -239,16 +239,17 @@ export const userLoginSendMsg = async (
     if (validateImageCodeRes === true) {
       await sendToPhoneTmpMsg(phone, imgCode, headers)
       setRequestHeadersByUserId(headers, userid)
+      return true
     } else {
       console.log(chalk.green('图片验证码验证失败....开始重试'))
-      userLoginSendMsg(phone, userid).catch((err) => {
+      return userLoginSendMsg(phone, userid).catch((err) => {
         throw new Error(err)
       })
     }
   } else {
     // 重试获取图片验证码
     console.log(chalk.green('图片验证码验证失败....开始重试'))
-    userLoginSendMsg(phone, userid).catch((err) => {
+    return userLoginSendMsg(phone, userid).catch((err) => {
       throw new Error(err)
     })
   }
@@ -262,14 +263,15 @@ export const userLoginPhone = async (
   phone: string,
   smscode: string,
   userid: string
-): Promise<void> => {
-  const headers = getRequestHeadersByUserId(userid)
-  await login114(phone, smscode, headers)
-  console.log(chalk.green('114平台登录成功...'))
-  // 保存请求头到文件中, 方便第二次使用
-  setRequestHeadersByUserId(headers, userid)
+): Promise<Boolean> => {
+  try {
+    const headers = getRequestHeadersByUserId(userid)
+    await login114(phone, smscode, headers)
+    console.log(chalk.green('114平台登录成功...'))
+    // 保存请求头到文件中, 方便第二次使用
+    setRequestHeadersByUserId(headers, userid)
+    return true
+  } catch (err) {
+    throw new Error(err as string)
+  }
 }
-
-userLoginSendMsg('17796761085', '17796761085').catch((err) => {
-  throw new Error(err)
-})
