@@ -246,14 +246,19 @@ const appointedConfirm = async (
 /**
  * 获取就诊人信息  主要获取就诊人的卡
  * 接口前置，在用户登录过程中，就获取就诊人信息，提供用户选择，我们在库中保存即可
+ * showType USER_CENTER 用户中心使用
+ * showType ORDER_CONFIRM 预约使用
  */
 
 export const getPatientInfoHandle = async (
+  showType: 'USER_CENTER' | 'ORDER_CONFIRM',
   userid: string
 ): Promise<PatientInfoType[]> => {
+  console.log('userid==', userid)
   const headers = getRequestHeadersByUserId(userid)
+  console.log('headers==', headers.Cookie)
   const res = await axios.get(
-    `https://www.114yygh.com/web/patient/list?_time=${Date.now()}&showType=ORDER_CONFIRM`,
+    `https://www.114yygh.com/web/patient/list?_time=${Date.now()}&showType=${showType}`,
     {
       headers,
       ...HttpProxyConfig
@@ -447,9 +452,9 @@ const register = async (
         // 查库获取用户选择的挂号证件
         const appointmentInfo = await getAppointmentRecord(appointmentid)
         if (appointmentInfo !== null) {
-          const cardNo = appointmentInfo.patientCardNo
-          const cardType = appointmentInfo.patientCardType
-          const phone = appointmentInfo.patientPhone
+          const cardNo = appointmentInfo.patient_card
+          const cardType = appointmentInfo.patient_card_type
+          const phone = appointmentInfo.patient_card
           const email = appointmentInfo.receive_email
 
           const saveAppointmentRes = await saveAppointment(

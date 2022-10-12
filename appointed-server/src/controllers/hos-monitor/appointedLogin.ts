@@ -147,7 +147,7 @@ export const login114 = (
     .then((res: any) => {
       // 登录成功 更新cookie
       setCookie(res.headers['set-cookie'], headers)
-      return '临时账号登录成功....'
+      console.log(`${mobile} 登录成功`)
     })
     .catch((err) => {
       throw new Error(err)
@@ -267,7 +267,6 @@ export const userLoginPhone = async (
   try {
     const headers = getRequestHeadersByUserId(userid)
     await login114(phone, smscode, headers)
-    console.log(chalk.green('114平台登录成功...'))
     // 保存请求头到文件中, 方便第二次使用
     setRequestHeadersByUserId(headers, userid)
     return true

@@ -37,11 +37,11 @@ export class AppointmentRecord {
   endtime: Date
 
   @Column()
-  patientPhone: string
+  patient_phone: string
 
   @Column()
-  patientCardNo: string
+  patient_card: string
 
   @Column()
-  patientCardType: string
+  patient_card_type: string
 }

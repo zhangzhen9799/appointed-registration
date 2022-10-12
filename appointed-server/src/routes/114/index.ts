@@ -130,9 +130,9 @@ class Appointed {
       appointmentRecord.endtime = endtime
       appointmentRecord.interval = interval
       appointmentRecord.receive_email = receiveemail
-      appointmentRecord.patientPhone = patientPhone
-      appointmentRecord.patientCardNo = patientCardNo
-      appointmentRecord.patientCardType = patientCardType
+      appointmentRecord.patient_phone = patientPhone
+      appointmentRecord.patient_card = patientCardNo
+      appointmentRecord.patient_card_type = patientCardType
     }
 
     // appointmentRecord.
@@ -233,7 +233,7 @@ class Appointed {
     })
     const userId = user?.userId
     if (userId !== undefined) {
-      getPatientInfoHandle(userId)
+      getPatientInfoHandle('USER_CENTER', userId)
         .then((val) => {
           Utils.response(
             res,
