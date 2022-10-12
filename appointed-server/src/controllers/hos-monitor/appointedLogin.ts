@@ -6,25 +6,23 @@ import Tesseract from 'tesseract.js'
 import sharp from 'sharp'
 import CryptoJS from 'crypto-js'
 import Utils from 'src/utils'
-
-import { setCookie } from 'src/utils/Cookie'
 import {
   getRequestHeadersByUserId,
   setRequestHeadersByUserId
 } from 'src/utils/common/requestHeader114'
-import { ReqHeadersType } from '../../types/commonType'
 
 /**
  * 获取登录图片验证码
  */
-export const getImageCode = (headers: ReqHeadersType): Promise<any> => {
+export const getImageCode = (userid: string): Promise<any> => {
+  const headers = getRequestHeadersByUserId(userid)
   return axios
     .get(`https://www.114yygh.com/web/img/getImgCode?_time=${Date.now()}`, {
       headers,
       responseType: 'arraybuffer'
     })
     .then((res: any) => {
-      setCookie(res.headers['set-cookie'], headers)
+      setRequestHeadersByUserId(res.headers, userid)
       return res
     })
     .catch((err) => {
@@ -55,8 +53,9 @@ const cryptoText = (text: string): string => {
  */
 export const validateImageCode = async (
   code: string,
-  headers: ReqHeadersType
+  userid: string
 ): Promise<Boolean> => {
+  const headers = getRequestHeadersByUserId(userid)
   return axios
     .get(
       `https://www.114yygh.com/web/checkcode?_time=${Date.now()}&code=${code}`,
@@ -65,7 +64,7 @@ export const validateImageCode = async (
       }
     )
     .then(async (res: any) => {
-      setCookie(res.headers['set-cookie'], headers)
+      setRequestHeadersByUserId(res.headers, userid)
 
       if (res.data.data === true) {
         return true
@@ -73,9 +72,6 @@ export const validateImageCode = async (
         // 大概率是图片验证码过期或者是识别失败
         // 这里就可以做一个重新获取验证码，走重试逻辑
         // console.log('图片验证码验证失败，进行重试')
-        // tmpLogin().catch((err) => {
-        //   throw new Error(err)
-        // })
         return false
       }
     })
@@ -99,9 +95,9 @@ const getTmpPhone = async (): Promise<string> => {
 const sendToPhoneMsg = async (
   phone: string,
   imgCode: string,
-  headers: ReqHeadersType
+  userid: string
 ): Promise<any> => {
-  // phone = await getTmpPhone()
+  const headers = getRequestHeadersByUserId(userid)
   const cipherPhone = cryptoText(phone)
   console.log('cipherPhone==>', cipherPhone)
   return axios
@@ -114,7 +110,7 @@ const sendToPhoneMsg = async (
       }
     )
     .then((res: any) => {
-      setCookie(res.headers['set-cookie'], headers)
+      setRequestHeadersByUserId(res.headers, userid)
       // 当前状态就是已经发送短信了，去查询短信验证码
       console.log('sendToPhoneMsg====', res.data)
       console.log('===短信验证码发送成功====')
@@ -131,8 +127,9 @@ const sendToPhoneMsg = async (
 export const login114 = (
   mobile: string,
   code: string,
-  headers: ReqHeadersType
-): Promise<any> => {
+  userid: string
+): Promise<Boolean> => {
+  const headers = getRequestHeadersByUserId(userid)
   console.log('login114-params', mobile, code, headers.Cookie)
   return axios
     .post(
@@ -147,8 +144,13 @@ export const login114 = (
     )
     .then((res: any) => {
       // 登录成功 更新cookie
-      setCookie(res.headers['set-cookie'], headers)
-      console.log(`${mobile} 登录成功`)
+      if (res.data.resCode === 0) {
+        setRequestHeadersByUserId(res.headers, userid)
+        console.log(`${mobile} - 登录成功`)
+        return true
+      } else {
+        return false
+      }
     })
     .catch((err) => {
       throw new Error(err)
@@ -183,25 +185,24 @@ export const distinguishImage = async (
  * 临时登录
  */
 export const tmpLogin = async (): Promise<void> => {
-  const headers = getRequestHeadersByUserId()
-  const { data } = await getImageCode(headers)
+  const userid = '114'
+  const { data } = await getImageCode(userid)
   const codeText = await distinguishImage(data)
   if (Array.isArray(/\d{4}/.exec(codeText))) {
     const imgCode = (/\d{4}/.exec(codeText) as any[])[0]
-    const validateImageCodeRes = await validateImageCode(imgCode, headers)
+    const validateImageCodeRes = await validateImageCode(imgCode, userid)
     if (validateImageCodeRes === true) {
       const phone = await getTmpPhone()
-      await sendToPhoneMsg(phone, imgCode, headers)
+      await sendToPhoneMsg(phone, imgCode, userid)
       const tmpMsgInfo = await Utils.getMessageByPhone(phone)
       console.log('tmpMsgInfo===', tmpMsgInfo)
       // 此时短信信息已经获取到
       const regRes = /【(\w+)】/.exec(tmpMsgInfo.modle)
       if (regRes !== null) {
         const smscode = regRes[1]
-        await login114(phone, smscode, headers)
+        await login114(phone, smscode, userid)
         console.log(chalk.green('114平台登录成功...'))
         // 保存请求头到文件中, 方便第二次使用
-        setRequestHeadersByUserId(headers)
       }
     } else {
       console.log(chalk.green('图片验证码验证失败....开始重试'))
@@ -225,17 +226,13 @@ export const userLoginSendMsg = async (
   phone: string,
   userid: string
 ): Promise<Boolean> => {
-  const headers = getRequestHeadersByUserId(userid)
-  // 清空 Cookie
-  headers.Cookie = ''
-  const { data } = await getImageCode(headers)
+  const { data } = await getImageCode(userid)
   const codeText = await distinguishImage(data)
   if (Array.isArray(/\d{4}/.exec(codeText))) {
     const imgCode = (/\d{4}/.exec(codeText) as any[])[0]
-    const validateImageCodeRes = await validateImageCode(imgCode, headers)
+    const validateImageCodeRes = await validateImageCode(imgCode, userid)
     if (validateImageCodeRes === true) {
-      await sendToPhoneMsg(phone, imgCode, headers)
-      setRequestHeadersByUserId(headers, userid)
+      await sendToPhoneMsg(phone, imgCode, userid)
       return true
     } else {
       console.log(chalk.green('图片验证码验证失败....开始重试'))
@@ -262,11 +259,8 @@ export const userLoginPhone = async (
   userid: string
 ): Promise<Boolean> => {
   try {
-    const headers = getRequestHeadersByUserId(userid)
-    await login114(phone, smscode, headers)
-    // 保存请求头到文件中, 方便第二次使用
-    setRequestHeadersByUserId(headers, userid)
-    return true
+    const loginStatus = await login114(phone, smscode, userid)
+    return loginStatus
   } catch (err) {
     throw new Error(err as string)
   }

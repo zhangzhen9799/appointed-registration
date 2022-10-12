@@ -4,9 +4,7 @@ import path from 'path'
 import axios from 'axios'
 import chalk from 'chalk'
 import Utils from '../../utils'
-import { ReqHeadersType } from '../../types/commonType'
 import HttpProxyConfig from '../../utils/common/httpProxy'
-import { setCookie } from '../../utils/Cookie'
 import { OrmDataSource } from '../../database/orm-data-source'
 import { AppointmentRecord } from '../../database/model/AppointmentRecord'
 import { AppointmentSuccessRecord } from '../../database/model/AppointmentSuccessRecord'
@@ -14,6 +12,8 @@ import {
   getRequestHeadersByUserId,
   setRequestHeadersByUserId
 } from '../../utils/common/requestHeader114'
+import { getImageCode, getRegistrationDetails } from './updateCookie'
+
 const AppointmentRecordReposity = OrmDataSource.getRepository(AppointmentRecord)
 const AppointmentSuccessRecordReposity = OrmDataSource.getRepository(
   AppointmentSuccessRecord
@@ -133,51 +133,6 @@ interface PatientInfoCardType {
  * @file-desc: 挂号，监控到有号之后调用挂号，开始挂号， 本文件中请求均需要挂代理进行操作
  * @author: huanghe
  */
-
-export const getImageCode = (headers: ReqHeadersType): Promise<any> => {
-  return axios
-    .get(`https://www.114yygh.com/web/img/getImgCode?_time=${Date.now()}`, {
-      headers,
-      responseType: 'arraybuffer'
-    })
-    .then((res: any) => {
-      setCookie(res.headers['set-cookie'], headers)
-      return res
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-}
-
-export const getRegistrationDetails = (
-  hosCode: string,
-  firstDeptCode: string,
-  secondDeptCode: string,
-  week: number,
-  headers: ReqHeadersType
-): Promise<any> => {
-  return axios
-    .post(
-      `https://www.114yygh.com/web/product/list?_time=${Date.now()}`,
-      {
-        firstDeptCode,
-        secondDeptCode,
-        hosCode,
-        week
-      },
-      {
-        headers,
-        ...HttpProxyConfig
-      }
-    )
-    .then((res: any) => {
-      setCookie(res.headers['set-cookie'], headers)
-      return res
-    })
-    .catch((err) => {
-      throw new Error(err)
-    })
-}
 
 /**
  * 获取某医院 某科室 某天的剩余号详情
@@ -391,6 +346,7 @@ const saveAppointment = async (
       ...HttpProxyConfig
     }
   )
+  console.log('saveAppointment', res.data)
   if (res.data.resCode === 0) {
     // console.log(res.data.data)
     // res.data.data.orderNo  订单号
@@ -505,13 +461,17 @@ const register = async (
         uniqProductKey,
         userid
       )
-      // console.log('appointedConfirmRes--->', typeof appointedConfirmRes === 'object')
+      console.log(
+        'appointedConfirmRes---->',
+        typeof appointedConfirmRes === 'object'
+      )
       if (typeof appointedConfirmRes === 'object') {
         // 此时需要预约的详情已有 可以提醒用户正在挂号
         await setAuthority(hosCode, userid)
         // 查库获取用户选择的挂号证件
         const appointmentInfo = await getAppointmentRecord(appointmentid)
         if (appointmentInfo !== null) {
+          // console.log('appointmentInfo====', appointmentInfo)
           const cardNo = appointmentInfo.patient_card
           const cardType = appointmentInfo.patient_card_type
           const phone = appointmentInfo.patient_card
@@ -587,13 +547,13 @@ const register = async (
   }
 }
 
-const hosCode = '162'
-const firstDeptCode = 'eb89d3cd9db56d8cc3e29109aed61f6b'
-const secondDeptCode = '200048496'
+const hosCode = '120'
+const firstDeptCode = '62c1fc52547f4c1af8968f2121a2d8fc'
+const secondDeptCode = '200000932'
 const target = '2022-10-14'
 const dutyTime = '0'
 const callback = (item: any): any => item
-const appointmentid = '3d98062b-60ca-4c29-b893-2a5c614f038d'
+const appointmentid = 'ffca1b8a-4983-41cb-9f83-f2262e8d9c3d'
 const userid = '71f416d7-0860-4053-9da0-ab425e136e65'
 
 register(

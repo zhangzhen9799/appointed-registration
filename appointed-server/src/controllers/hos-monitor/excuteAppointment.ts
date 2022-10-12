@@ -11,6 +11,7 @@ import { AppointmentRecord } from '../../database/model/AppointmentRecord'
 import HttpProxyConfig from '../../utils/common/httpProxy'
 import userRegister from '../hos-register/register'
 import { getRequestHeadersByUserId } from '../../utils/common/requestHeader114'
+import { getImageCode } from '../hos-register/updateCookie'
 
 interface msgType {
   addRecords?: AppointmentRecord[]
@@ -61,13 +62,14 @@ class SearchTaskManager {
 
 const searchTM = new SearchTaskManager()
 
-const getRegistrationDetails = (
+const getRegistrationDetails = async (
   firstDeptCode: string,
   secondDeptCode: string,
   hosCode: string,
   week: number
 ): Promise<any> => {
   const headers = getRequestHeadersByUserId()
+  await getImageCode(headers)
   return axios
     .post(
       `https://www.114yygh.com/web/product/list?_time=${Date.now()}`,
@@ -83,6 +85,7 @@ const getRegistrationDetails = (
       }
     )
     .then((res: any) => {
+      // console.log('getRegistrationDetails - res', res)
       if (res.data.resCode === 102 && res.data.data === null) {
         // 给主进程发消息，获取新cookie
         // TODO: 等下删掉注释

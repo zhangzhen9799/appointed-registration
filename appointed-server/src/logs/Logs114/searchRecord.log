@@ -1,0 +1,656 @@
+{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-20",
+   "weekDesc": "周四",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-21",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-22",
+   "weekDesc": "周六",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-23",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-24",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-25",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-26",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-27",
+   "weekDesc": "周四",
+   "status": "TOMORROW_OPEN"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600001,
+ "refreshMilliseconds": 13608913
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-13",
+   "weekDesc": "周四",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-14",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-15",
+   "weekDesc": "周六",
+   "status": "SOLD_OUT"
+  },
+  {
+   "dutyDate": "2022-10-16",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-17",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-18",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-19",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600072,
+ "refreshMilliseconds": 13567777
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-13",
+   "weekDesc": "周四",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-14",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-15",
+   "weekDesc": "周六",
+   "status": "SOLD_OUT"
+  },
+  {
+   "dutyDate": "2022-10-16",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-17",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-18",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-19",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600070,
+ "refreshMilliseconds": 13566287
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-13",
+   "weekDesc": "周四",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-14",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-15",
+   "weekDesc": "周六",
+   "status": "SOLD_OUT"
+  },
+  {
+   "dutyDate": "2022-10-16",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-17",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-18",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-19",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600070,
+ "refreshMilliseconds": 13566199
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-20",
+   "weekDesc": "周四",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-21",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-22",
+   "weekDesc": "周六",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-23",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-24",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-25",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-26",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-27",
+   "weekDesc": "周四",
+   "status": "TOMORROW_OPEN"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600000,
+ "refreshMilliseconds": 13565879
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-13",
+   "weekDesc": "周四",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-14",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-15",
+   "weekDesc": "周六",
+   "status": "SOLD_OUT"
+  },
+  {
+   "dutyDate": "2022-10-16",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-17",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-18",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-19",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600071,
+ "refreshMilliseconds": 13564518
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-13",
+   "weekDesc": "周四",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-14",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-15",
+   "weekDesc": "周六",
+   "status": "SOLD_OUT"
+  },
+  {
+   "dutyDate": "2022-10-16",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-17",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-18",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-19",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600071,
+ "refreshMilliseconds": 13564148
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-20",
+   "weekDesc": "周四",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-21",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-22",
+   "weekDesc": "周六",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-23",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-24",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-25",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-26",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-27",
+   "weekDesc": "周四",
+   "status": "TOMORROW_OPEN"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600000,
+ "refreshMilliseconds": 13563136
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-13",
+   "weekDesc": "周四",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-14",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-15",
+   "weekDesc": "周六",
+   "status": "SOLD_OUT"
+  },
+  {
+   "dutyDate": "2022-10-16",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-17",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-18",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-19",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600072,
+ "refreshMilliseconds": 13563161
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-20",
+   "weekDesc": "周四",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-21",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-22",
+   "weekDesc": "周六",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-23",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-24",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-25",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-26",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-27",
+   "weekDesc": "周四",
+   "status": "TOMORROW_OPEN"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600000,
+ "refreshMilliseconds": 13560367
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-13",
+   "weekDesc": "周四",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-14",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-15",
+   "weekDesc": "周六",
+   "status": "SOLD_OUT"
+  },
+  {
+   "dutyDate": "2022-10-16",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-17",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-18",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-19",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600072,
+ "refreshMilliseconds": 13559898
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-20",
+   "weekDesc": "周四",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-21",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-22",
+   "weekDesc": "周六",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-23",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-24",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-25",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-26",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-27",
+   "weekDesc": "周四",
+   "status": "TOMORROW_OPEN"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600000,
+ "refreshMilliseconds": 13559675
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-20",
+   "weekDesc": "周四",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-21",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-22",
+   "weekDesc": "周六",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-23",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-24",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-25",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-26",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-27",
+   "weekDesc": "周四",
+   "status": "TOMORROW_OPEN"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600000,
+ "refreshMilliseconds": 13558013
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-20",
+   "weekDesc": "周四",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-21",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-22",
+   "weekDesc": "周六",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-23",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-24",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-25",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-26",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-27",
+   "weekDesc": "周四",
+   "status": "TOMORROW_OPEN"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600003,
+ "refreshMilliseconds": 13557703
+}{
+ "calendars": [
+  {
+   "dutyDate": "2022-10-20",
+   "weekDesc": "周四",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-21",
+   "weekDesc": "周五",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-22",
+   "weekDesc": "周六",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-23",
+   "weekDesc": "周日",
+   "status": "NO_INVENTORY"
+  },
+  {
+   "dutyDate": "2022-10-24",
+   "weekDesc": "周一",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-25",
+   "weekDesc": "周二",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-26",
+   "weekDesc": "周三",
+   "status": "AVAILABLE"
+  },
+  {
+   "dutyDate": "2022-10-27",
+   "weekDesc": "周四",
+   "status": "TOMORROW_OPEN"
+  }
+ ],
+ "totalWeek": 2,
+ "fhTimestamp": 1665615600000,
+ "refreshMilliseconds": 13549968
+}

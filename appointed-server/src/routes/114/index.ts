@@ -209,10 +209,14 @@ class Appointed {
     if (userId !== undefined) {
       userLoginPhone(phone as string, code, userId)
         .then((val) => {
-          Utils.response(res, {
-            success: true,
-            msg: '114平台登录成功'
-          })
+          if (val === true) {
+            Utils.response(res, {
+              success: true,
+              msg: '114平台登录成功'
+            })
+          } else {
+            Utils.response(res, null, 404, '114平台登录失败，请稍候重试')
+          }
         })
         .catch((err) => {
           Utils.response(res, err, 404, '114平台登录失败，请稍候重试')

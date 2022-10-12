@@ -36,7 +36,7 @@ export const setRequestHeadersByUserId = (
   headers: any,
   userid: string = '114'
 ): ReqHeadersType => {
-  // console.log('setRequestHeadersByUserId userid', userid)
+  console.log('setRequestHeadersByUserId userid', userid)
   const oldHeaders = getRequestHeadersByUserId(userid)
   setCookie(headers['set-cookie'], oldHeaders)
   if (userid === '114') {
