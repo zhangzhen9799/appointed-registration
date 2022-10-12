@@ -96,7 +96,7 @@ const getTmpPhone = async (): Promise<string> => {
  * 手机号和图片验证码 发送短信验证码
  */
 
-const sendToPhoneTmpMsg = async (
+const sendToPhoneMsg = async (
   phone: string,
   imgCode: string,
   headers: ReqHeadersType
@@ -116,7 +116,7 @@ const sendToPhoneTmpMsg = async (
     .then((res: any) => {
       setCookie(res.headers['set-cookie'], headers)
       // 当前状态就是已经发送短信了，去查询短信验证码
-      console.log('sendToPhoneTmpMsg====', res.data)
+      console.log('sendToPhoneMsg====', res.data)
       console.log('===短信验证码发送成功====')
       console.log('此时phone==>', phone)
     })
@@ -133,6 +133,7 @@ export const login114 = (
   code: string,
   headers: ReqHeadersType
 ): Promise<any> => {
+  console.log('login114-params', mobile, code, headers.Cookie)
   return axios
     .post(
       `https://www.114yygh.com/web/login?_time=${Date.now()}`,
@@ -190,23 +191,17 @@ export const tmpLogin = async (): Promise<void> => {
     const validateImageCodeRes = await validateImageCode(imgCode, headers)
     if (validateImageCodeRes === true) {
       const phone = await getTmpPhone()
-      await sendToPhoneTmpMsg(phone, imgCode, headers)
+      await sendToPhoneMsg(phone, imgCode, headers)
       const tmpMsgInfo = await Utils.getMessageByPhone(phone)
       console.log('tmpMsgInfo===', tmpMsgInfo)
       // 此时短信信息已经获取到
       const regRes = /【(\w+)】/.exec(tmpMsgInfo.modle)
       if (regRes !== null) {
-        const messCode = regRes[1]
-        const res = await login114(phone, messCode, headers)
+        const smscode = regRes[1]
+        await login114(phone, smscode, headers)
         console.log(chalk.green('114平台登录成功...'))
         // 保存请求头到文件中, 方便第二次使用
-        fs.writeFileSync(
-          path.join(__dirname, '../../constants/114Cookie.json'),
-          JSON.stringify(headers),
-          {
-            encoding: 'utf8'
-          }
-        )
+        setRequestHeadersByUserId(headers)
       }
     } else {
       console.log(chalk.green('图片验证码验证失败....开始重试'))
@@ -231,13 +226,15 @@ export const userLoginSendMsg = async (
   userid: string
 ): Promise<Boolean> => {
   const headers = getRequestHeadersByUserId(userid)
+  // 清空 Cookie
+  headers.Cookie = ''
   const { data } = await getImageCode(headers)
   const codeText = await distinguishImage(data)
   if (Array.isArray(/\d{4}/.exec(codeText))) {
     const imgCode = (/\d{4}/.exec(codeText) as any[])[0]
     const validateImageCodeRes = await validateImageCode(imgCode, headers)
     if (validateImageCodeRes === true) {
-      await sendToPhoneTmpMsg(phone, imgCode, headers)
+      await sendToPhoneMsg(phone, imgCode, headers)
       setRequestHeadersByUserId(headers, userid)
       return true
     } else {

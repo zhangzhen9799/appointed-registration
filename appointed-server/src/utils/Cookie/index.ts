@@ -3,12 +3,16 @@ export interface ObjType {
 }
 export const cookieMap: ObjType = {}
 
+const blackList = ['', 'Path', 'Domain', 'Expires']
 /**
  * 将cookieMap处理为cookie字符串
  */
 export const cookieMapToStr = (cookieMap: ObjType): string => {
   const keys = Object.keys(cookieMap)
-  return keys.map((item: string) => `${item}=${cookieMap[item]};`).join(' ')
+  return keys
+    .map((item: string) => `${item}=${cookieMap[item]};`)
+    .join(' ')
+    .replace(/;+$/, ';')
 }
 
 /**
@@ -18,7 +22,9 @@ export const addCookieStrToMap = (cookie: string, cookieMap: ObjType): void => {
   // 先将cookie转为map,再与cookieMap对浅合并
   cookie.split('; ').forEach((item) => {
     const [key, value] = item.split('=')
-    cookieMap[key] = value
+    if (!blackList.includes(key) && value !== undefined) {
+      cookieMap[key] = value
+    }
   })
 }
 

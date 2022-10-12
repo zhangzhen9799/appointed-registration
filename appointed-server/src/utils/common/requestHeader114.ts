@@ -7,6 +7,7 @@ import { ReqHeadersType } from '../../types/commonType'
 export const getRequestHeadersByUserId = (
   userid: string = '114'
 ): ReqHeadersType => {
+  // console.log('getRequestHeadersByUserId userid', userid)
   if (userid === '114') {
     return JSON.parse(
       fs.readFileSync(
@@ -32,15 +33,16 @@ export const getRequestHeadersByUserId = (
 }
 
 export const setRequestHeadersByUserId = (
-  newHeaders: any,
+  headers: any,
   userid: string = '114'
 ): ReqHeadersType => {
-  const headers = getRequestHeadersByUserId(userid)
-  setCookie(newHeaders['set-cookie'], headers)
+  // console.log('setRequestHeadersByUserId userid', userid)
+  const oldHeaders = getRequestHeadersByUserId(userid)
+  setCookie(headers['set-cookie'], oldHeaders)
   if (userid === '114') {
     fs.writeFileSync(
       path.join(__dirname, '../../constants/114Cookie.json'),
-      JSON.stringify(headers),
+      JSON.stringify(oldHeaders),
       {
         encoding: 'utf8'
       }
@@ -48,7 +50,7 @@ export const setRequestHeadersByUserId = (
   } else {
     fs.writeFileSync(
       path.join(__dirname, `../../constants/usersCookie/${userid}.json`),
-      JSON.stringify(headers),
+      JSON.stringify(oldHeaders),
       {
         encoding: 'utf8'
       }

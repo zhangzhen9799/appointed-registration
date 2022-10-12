@@ -14,7 +14,6 @@ import {
   getRequestHeadersByUserId,
   setRequestHeadersByUserId
 } from '../../utils/common/requestHeader114'
-
 const AppointmentRecordReposity = OrmDataSource.getRepository(AppointmentRecord)
 const AppointmentSuccessRecordReposity = OrmDataSource.getRepository(
   AppointmentSuccessRecord
@@ -135,6 +134,51 @@ interface PatientInfoCardType {
  * @author: huanghe
  */
 
+export const getImageCode = (headers: ReqHeadersType): Promise<any> => {
+  return axios
+    .get(`https://www.114yygh.com/web/img/getImgCode?_time=${Date.now()}`, {
+      headers,
+      responseType: 'arraybuffer'
+    })
+    .then((res: any) => {
+      setCookie(res.headers['set-cookie'], headers)
+      return res
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+}
+
+export const getRegistrationDetails = (
+  hosCode: string,
+  firstDeptCode: string,
+  secondDeptCode: string,
+  week: number,
+  headers: ReqHeadersType
+): Promise<any> => {
+  return axios
+    .post(
+      `https://www.114yygh.com/web/product/list?_time=${Date.now()}`,
+      {
+        firstDeptCode,
+        secondDeptCode,
+        hosCode,
+        week
+      },
+      {
+        headers,
+        ...HttpProxyConfig
+      }
+    )
+    .then((res: any) => {
+      setCookie(res.headers['set-cookie'], headers)
+      return res
+    })
+    .catch((err) => {
+      throw new Error(err)
+    })
+}
+
 /**
  * 获取某医院 某科室 某天的剩余号详情
  * 返回剩余号，如果返回数组为空，则表示已经无号
@@ -146,7 +190,17 @@ const getHosAndDeptDetail = async (
   target: string,
   userid: string
 ): Promise<RestDoctorsType[] | Boolean> => {
+  console.log('getHosAndDeptDetail-userid==', userid)
   const headers = getRequestHeadersByUserId(userid)
+
+  await getImageCode(headers)
+  await getRegistrationDetails(
+    hosCode,
+    firstDeptCode,
+    secondDeptCode,
+    1,
+    headers
+  )
   const params = {
     hosCode,
     firstDeptCode,
@@ -161,6 +215,7 @@ const getHosAndDeptDetail = async (
       ...HttpProxyConfig
     }
   )
+  // console.log('getHosAndDeptDetail return data ====> ', res.data)
   if (res.data.resCode === 0) {
     // 将返回数据处理， 过滤出可以挂号号源
     const result = res.data.data.map((item: any) => {
@@ -191,7 +246,7 @@ const validateRealName = async (userid: string): Promise<Boolean> => {
       ...HttpProxyConfig
     }
   )
-
+  // console.log('validateRealName==', res.data)
   if (res.data.resCode === 0) {
     // 实名认证通过   status === "AUTH_PASS" 表明实名认证通过
     if (res.data.data.status === 'AUTH_PASS') {
@@ -235,6 +290,7 @@ const appointedConfirm = async (
       ...HttpProxyConfig
     }
   )
+  // console.log('appointedConfirm--->', res.data)
   if (res.data.resCode === 0) {
     // console.log(res.data.data)
     setRequestHeadersByUserId(res.headers, userid)
@@ -254,9 +310,10 @@ export const getPatientInfoHandle = async (
   showType: 'USER_CENTER' | 'ORDER_CONFIRM',
   userid: string
 ): Promise<PatientInfoType[]> => {
-  console.log('userid==', userid)
+  // console.log('userid==', userid)
   const headers = getRequestHeadersByUserId(userid)
-  console.log('headers==', headers.Cookie)
+  // console.log('headers.Cookie==', headers.Cookie)
+  // console.log('showType==', showType)
   const res = await axios.get(
     `https://www.114yygh.com/web/patient/list?_time=${Date.now()}&showType=${showType}`,
     {
@@ -287,6 +344,7 @@ const setAuthority = async (hosCode: string, userid: string): Promise<void> => {
       ...HttpProxyConfig
     }
   )
+  // console.log('setAuthority--->', res.data)
   if (res.data.resCode === 0) {
     setRequestHeadersByUserId(res.headers, userid)
     return res.data.data
@@ -429,6 +487,7 @@ const register = async (
     target,
     userid
   )
+  // console.log('restDoctors====', restDoctors)
   // 有余号的医生
   if (Array.isArray(restDoctors) && restDoctors.length > 0) {
     // 根据条件选中一个医生
@@ -446,6 +505,7 @@ const register = async (
         uniqProductKey,
         userid
       )
+      // console.log('appointedConfirmRes--->', typeof appointedConfirmRes === 'object')
       if (typeof appointedConfirmRes === 'object') {
         // 此时需要预约的详情已有 可以提醒用户正在挂号
         await setAuthority(hosCode, userid)
@@ -521,10 +581,33 @@ const register = async (
           }
         }
       }
+    } else {
+      console.log(chalk.red('未实名...'))
     }
   }
 }
 
+const hosCode = '162'
+const firstDeptCode = 'eb89d3cd9db56d8cc3e29109aed61f6b'
+const secondDeptCode = '200048496'
+const target = '2022-10-14'
+const dutyTime = '0'
+const callback = (item: any): any => item
+const appointmentid = '3d98062b-60ca-4c29-b893-2a5c614f038d'
+const userid = '71f416d7-0860-4053-9da0-ab425e136e65'
+
+register(
+  hosCode,
+  firstDeptCode,
+  secondDeptCode,
+  target,
+  dutyTime,
+  callback,
+  appointmentid,
+  userid
+).catch((err) => {
+  throw new Error(err)
+})
 export default {
   register
 }

@@ -14,7 +14,6 @@ import routes from './routes'
 import './controllers/hos-monitor/childProcess'
 
 import Utils from './utils'
-import 'src/controllers/hos-register/register'
 
 dotenv.config()
 

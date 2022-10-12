@@ -10,6 +10,7 @@ import { OrmDataSource } from '../../database/orm-data-source'
 import { AppointmentRecord } from '../../database/model/AppointmentRecord'
 import HttpProxyConfig from '../../utils/common/httpProxy'
 import userRegister from '../hos-register/register'
+import { getRequestHeadersByUserId } from '../../utils/common/requestHeader114'
 
 interface msgType {
   addRecords?: AppointmentRecord[]
@@ -32,15 +33,6 @@ const emitParentGetCookieHandle = _.debounce(
   300000,
   { leading: true }
 )
-
-const getHeaders = (): any => {
-  return JSON.parse(
-    fs.readFileSync(
-      path.join(__dirname, '../../constants/114Cookie.json'),
-      'utf-8'
-    )
-  )
-}
 
 class SearchTaskManager {
   public taskIns: TaskInsType = {}
@@ -75,7 +67,7 @@ const getRegistrationDetails = (
   hosCode: string,
   week: number
 ): Promise<any> => {
-  const headers = getHeaders()
+  const headers = getRequestHeadersByUserId()
   return axios
     .post(
       `https://www.114yygh.com/web/product/list?_time=${Date.now()}`,
@@ -91,13 +83,12 @@ const getRegistrationDetails = (
       }
     )
     .then((res: any) => {
-      setCookie(res.headers['set-cookie'], headers)
-      // console.log(JSON.stringify(res.data))
       if (res.data.resCode === 102 && res.data.data === null) {
         // 给主进程发消息，获取新cookie
         // TODO: 等下删掉注释
         emitParentGetCookieHandle()
       } else if (res.data.data !== null) {
+        setCookie(res.headers['set-cookie'], headers)
         fs.writeFile(
           path.join(__dirname, '../../logs/Logs114/searchRecord.log'),
           JSON.stringify(res.data.data, null, ' '),
@@ -170,7 +161,7 @@ export const excuteAppointment = async (
       await sendEmail({
         to: params.receive_email,
         subject: '114监控平台',
-        text: '监控平台提醒您，您预约的{医院}-{科室}-{时间段}，现在有号可约，抓紧时间来预约挂号吧！！！'
+        text: `监控平台提醒您，您预约的{医院}-{科室}-${params.starttime}-${params.endtime}，现在有号可约，抓紧时间来预约挂号吧！！！`
       })
 
       await userRegister.register(

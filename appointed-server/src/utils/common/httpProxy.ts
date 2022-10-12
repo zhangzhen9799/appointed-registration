@@ -14,8 +14,8 @@ import tunnel from 'tunnel'
 const httpsAgent = tunnel.httpsOverHttp({
   proxy: {
     host: '140.249.73.234',
-    port: 15002,
-    proxyAuth: 'hhcol:123456'
+    port: 15025,
+    proxyAuth: '452834:452834'
   }
 })
 
