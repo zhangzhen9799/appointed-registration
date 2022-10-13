@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, computed, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import {
@@ -18,8 +18,64 @@ const monitorSetting = reactive({
   timeRange: [new Date(), new Date()],
   phone: "",
   code: "",
-  patientInfo: {},
+  patientInfo: {
+    cardType: "",
+    cardNo: "",
+  },
 });
+
+const curPatientCardNo = ref("");
+const visiterCardNo = ref("");
+
+const patientList = reactive([
+  {
+    patientName: "黄贺",
+    idCardType: "IDENTITY_CARD",
+    idCardTypeView: "居民身份证",
+    idCardNo: "411421199811092116",
+    idCardNoView: "4114****2116",
+    phone: "17796761085",
+    status: "BIND",
+    statusTips: "",
+    cardList: [
+      {
+        cardType: "SOCIAL_SECURITY",
+        cardTypeView: "社保卡",
+        cardNo: "12984506600X",
+        cardNoView: "1298****600X",
+        medicareType: "MEDICARE_CARD",
+        medicareTypeView: "医保",
+      },
+      {
+        cardType: "IDENTITY_CARD",
+        cardTypeView: "居民身份证",
+        cardNo: "411421199811092116",
+        cardNoView: "4114****2116",
+        medicareType: "SELF_PAY_CARD",
+        medicareTypeView: "自费",
+      },
+    ],
+    options: [],
+  },
+]);
+
+const patientCards = reactive([]);
+const radioGroupChange = (label) => {
+  const cardItem = patientCards.filter((item) => item.cardNo === label)[0];
+  monitorSetting.patientInfo.cardNo = cardItem.cardNo;
+  monitorSetting.patientInfo.cardType = cardItem.cardType;
+};
+watch(
+  () => curPatientCardNo.value,
+  (newVal, oldVal) => {
+    if (newVal !== "") {
+      patientCards.length = 0;
+      patientCards.push(
+        ...patientList.filter((item) => item.idCardNo === newVal)[0].cardList
+      );
+    }
+  }
+);
 
 const formRules = {
   email: [
@@ -84,7 +140,7 @@ const login114Handle = async () => {
       message: "登录114成功",
       type: "success",
     });
-    await getPatientInfo()
+    await getPatientInfo();
   } else {
     ElMessage({
       message: "登录114失败，请稍候重试",
@@ -177,10 +233,30 @@ const createAppointment = async () => {
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item label="就诊信息:">
-          <el-radio-group v-model="monitorSetting.patientInfo">
-            <el-radio label="1" border>Option A</el-radio>
-            <el-radio label="2" border>Option B</el-radio>
+        <el-divider content-position="left">选择就诊人信息</el-divider>
+        <el-form-item label="选择就诊人">
+          <el-radio-group v-model="curPatientCardNo">
+            <el-radio
+              :label="patientItem.idCardNo"
+              border
+              size="large"
+              v-for="patientItem in patientList"
+              :key="patientItem.idCardNo"
+            >
+              {{ patientItem.patientName }}
+            </el-radio>
+          </el-radio-group>
+        </el-form-item>
+        <el-form-item label="选择就诊卡" v-if="patientCards.length > 0">
+          <el-radio-group @change="radioGroupChange" v-model="visiterCardNo">
+            <el-radio
+              :label="patientCard.cardNo"
+              size="large"
+              border
+              v-for="patientCard in patientCards"
+              :key="patientCard.cardNo"
+              >{{ patientCard.cardTypeView }}</el-radio
+            >
           </el-radio-group>
         </el-form-item>
         <el-form-item>
@@ -193,6 +269,9 @@ const createAppointment = async () => {
 
     <div class="tips">
       注意：系统会根据您设定的时间对您选择的医院-科室进行查询，如果有余量则会通过邮件通知您！！！
+    </div>
+    <div class="tips">
+      注意：系统会在有余号的情况下尝试用您的账号进行尝试挂号！！！
     </div>
   </div>
 </template>
