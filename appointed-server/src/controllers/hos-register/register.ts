@@ -443,12 +443,14 @@ const register = async (
     target,
     userid
   )
-  // console.log('restDoctors====', restDoctors)
+  console.log('restDoctors====', restDoctors)
   // 有余号的医生
   if (Array.isArray(restDoctors) && restDoctors.length > 0) {
     // 根据条件选中一个医生
-    const uniqProductKey =
-      restDoctors.filter(filterCallback)[0].detail[0].uniqProductKey
+    const uniqProductKey = [
+      ...restDoctors.filter(filterCallback)[0].detail,
+      ...restDoctors.filter(filterCallback)[1].detail
+    ][0].uniqProductKey
     const validateRealNameResult = await validateRealName(userid)
     // 验证用户实名成功
     if (validateRealNameResult === true) {
@@ -547,27 +549,28 @@ const register = async (
   }
 }
 
-const hosCode = '112'
-const firstDeptCode = '0eedf750626d87f2ce4969150af58772'
-const secondDeptCode = '200051507'
-const target = '2022-10-15'
-const dutyTime = '0'
-const callback = (item: any): any => item
-const appointmentid = 'ffca1b8a-4983-41cb-9f83-f2262e8d9c3d'
-const userid = '71f416d7-0860-4053-9da0-ab425e136e65'
+// const hosCode = 'H112628'
+// const firstDeptCode = 'Medical_system'
+// const secondDeptCode = '0000168'
+// const target = '2022-10-13'
+// const dutyTime = '0'
+// const callback = (item: any): any => item
+// const appointmentid = 'ffca1b8a-4983-41cb-9f83-f2262e8d9c3d'
+// const userid = '71f416d7-0860-4053-9da0-ab425e136e65'
 
-register(
-  hosCode,
-  firstDeptCode,
-  secondDeptCode,
-  target,
-  dutyTime,
-  callback,
-  appointmentid,
-  userid
-).catch((err) => {
-  throw new Error(err)
-})
+// register(
+//   hosCode,
+//   firstDeptCode,
+//   secondDeptCode,
+//   target,
+//   dutyTime,
+//   callback,
+//   appointmentid,
+//   userid
+// ).catch((err) => {
+//   throw new Error(err)
+// })
+
 export default {
   register
 }
