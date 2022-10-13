@@ -72,31 +72,20 @@ const nextBtnHandle = () => {
           >{{ depInfo.date }}</el-breadcrumb-item
         >
       </el-breadcrumb>
-      <transition>
-        <router-view
-          @selectHos="selectHosHandle"
-          @selectDep="selectDepHandle"
-          @selectDate="selectDateHandle"
-          :hosInfo="hosInfo"
-          :depInfo="depInfo"
-        ></router-view>
-      </transition>
-      <!-- <el-button-group>
-        <el-button
-          type="primary"
-          :disabled="routeIdx <= 0"
-          @click="prevBtnHandle"
-        >
-          上一步
-        </el-button>
-        <el-button
-          type="primary"
-          :disabled="routeIdx >= routeList.length - 1"
-          @click="nextBtnHandle"
-        >
-          下一步
-        </el-button>
-      </el-button-group> -->
+
+      <router-view v-slot="{ Component }">
+        <transition name="fade-transform" mode="out-in">
+          <component
+            :is="Component"
+            @selectHos="selectHosHandle"
+            @selectDep="selectDepHandle"
+            @selectDate="selectDateHandle"
+            :hosInfo="hosInfo"
+            :depInfo="depInfo"
+            class="transition-com"
+          />
+        </transition>
+      </router-view>
     </div>
   </div>
 </template>
@@ -115,6 +104,27 @@ const nextBtnHandle = () => {
 }
 .el-breadcrumb {
   margin: 20px;
+}
+
+.content-box {
+  position: relative;
+  .transition-com {
+    position: absolute;
+  }
+}
+.fade-transform-leave-active,
+.fade-transform-enter-active {
+  transition: all 0.5s;
+}
+
+.fade-transform-enter-from {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+
+.fade-transform-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
 }
 </style>
   

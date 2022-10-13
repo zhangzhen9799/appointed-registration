@@ -27,37 +27,7 @@ const monitorSetting = reactive({
 const curPatientCardNo = ref("");
 const visiterCardNo = ref("");
 
-const patientList = reactive([
-  {
-    patientName: "黄贺",
-    idCardType: "IDENTITY_CARD",
-    idCardTypeView: "居民身份证",
-    idCardNo: "411421199811092116",
-    idCardNoView: "4114****2116",
-    phone: "17796761085",
-    status: "BIND",
-    statusTips: "",
-    cardList: [
-      {
-        cardType: "SOCIAL_SECURITY",
-        cardTypeView: "社保卡",
-        cardNo: "12984506600X",
-        cardNoView: "1298****600X",
-        medicareType: "MEDICARE_CARD",
-        medicareTypeView: "医保",
-      },
-      {
-        cardType: "IDENTITY_CARD",
-        cardTypeView: "居民身份证",
-        cardNo: "411421199811092116",
-        cardNoView: "4114****2116",
-        medicareType: "SELF_PAY_CARD",
-        medicareTypeView: "自费",
-      },
-    ],
-    options: [],
-  },
-]);
+const patientList = reactive([]);
 
 const patientCards = reactive([]);
 const radioGroupChange = (label) => {
@@ -233,8 +203,8 @@ const createAppointment = async () => {
             </template>
           </el-input>
         </el-form-item>
-        <el-divider content-position="left">选择就诊人信息</el-divider>
-        <el-form-item label="选择就诊人">
+        <el-divider content-position="left" v-if="patientList.length > 0">选择就诊人信息</el-divider>
+        <el-form-item label="选择就诊人" v-if="patientList.length > 0">
           <el-radio-group v-model="curPatientCardNo">
             <el-radio
               :label="patientItem.idCardNo"
