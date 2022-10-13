@@ -239,14 +239,25 @@ class Appointed {
     if (userId !== undefined) {
       getPatientInfoHandle('USER_CENTER', userId)
         .then((val) => {
-          Utils.response(
-            res,
-            {
-              data: val
-            },
-            200,
-            '查找就诊人信息成功'
-          )
+          if (val.length > 0) {
+            Utils.response(
+              res,
+              {
+                data: val
+              },
+              200,
+              '查找就诊人信息成功'
+            )
+          } else {
+            Utils.response(
+              res,
+              {
+                data: val
+              },
+              200,
+              '查找就诊人信息为空'
+            )
+          }
         })
         .catch((err) => {
           Utils.response(res, err, 404, '查找就诊人信息失败')

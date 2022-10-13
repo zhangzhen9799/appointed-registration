@@ -547,10 +547,10 @@ const register = async (
   }
 }
 
-const hosCode = '120'
-const firstDeptCode = '62c1fc52547f4c1af8968f2121a2d8fc'
-const secondDeptCode = '200000932'
-const target = '2022-10-14'
+const hosCode = '112'
+const firstDeptCode = '0eedf750626d87f2ce4969150af58772'
+const secondDeptCode = '200051507'
+const target = '2022-10-15'
 const dutyTime = '0'
 const callback = (item: any): any => item
 const appointmentid = 'ffca1b8a-4983-41cb-9f83-f2262e8d9c3d'

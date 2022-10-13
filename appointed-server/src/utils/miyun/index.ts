@@ -7,7 +7,7 @@ import { asyncTaskRetry } from '../common/asyncTaskRetry'
  */
 const miyunToken = '5bdb7fc3ad64-381186'
 const projectId = '54427'
-const miyunHost = 'https://api.wulayun.site'
+const miyunHost = 'https://api.miyun.pro'
 
 /**
  * 从miyun平台取出一个临时手机号
