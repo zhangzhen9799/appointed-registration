@@ -84,7 +84,7 @@ const getRegistrationDetails = async (
         ...HttpProxyConfig
       }
     )
-    .then((res: any) => {
+    .then((res: any): any => {
       // console.log('getRegistrationDetails - res', res)
       if (res.data.resCode === 102 && res.data.data === null) {
         // 给主进程发消息，获取新cookie
@@ -105,7 +105,10 @@ const getRegistrationDetails = async (
             }
           }
         )
-        return res.data.data.calendars
+        return {
+          calendars: res.data.data.calendars,
+          totalWeek: res.data.data.totalWeek
+        }
       } else {
         console.log('res.data', res.data)
       }
@@ -127,23 +130,34 @@ export const excuteAppointment = async (
   // 请求指定平台，是否已经具有可用cookie
   // 如果cookie 不可用，需要尝试重新登录
   const resultList = []
-  const resultListFirstWeek = await getRegistrationDetails(
-    params.firstdepcode,
-    params.seconddepcode,
-    params.hoscode,
-    1
-  )
-  const resultListSecondWeek = await getRegistrationDetails(
-    params.firstdepcode,
-    params.seconddepcode,
-    params.hoscode,
-    2
+  const { totalWeek, calendars: resultListFirstWeek } =
+    await getRegistrationDetails(
+      params.firstdepcode,
+      params.seconddepcode,
+      params.hoscode,
+      1
+    )
+  const resultRestWeek = []
+  // 将剩余的全部加载回来
+  for (let i = 2; i <= totalWeek; i++) {
+    resultRestWeek.push(
+      getRegistrationDetails(
+        params.firstdepcode,
+        params.seconddepcode,
+        params.hoscode,
+        i
+      )
+    )
+  }
+  const resultListRestWeek = (await Promise.all(resultRestWeek)).reduce(
+    (acc, cur) => acc.push(cur.calendars),
+    []
   )
   if (Array.isArray(resultListFirstWeek)) {
     resultList.push(...resultListFirstWeek)
   }
-  if (Array.isArray(resultListSecondWeek)) {
-    resultList.push(...resultListSecondWeek)
+  if (Array.isArray(resultListRestWeek)) {
+    resultList.push(...resultListRestWeek)
   }
   // 每一项中的status为 "AVAILABLE" 表示当天还有号
   const userSetStartTime = new Date(params.starttime).getTime()
