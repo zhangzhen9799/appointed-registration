@@ -23,7 +23,14 @@ const initializeExpress = (): void => {
   // cors
   app.use(cors())
   // set various HTTP headers
-  app.use(helmet())
+  app.use(
+    helmet.contentSecurityPolicy({
+      useDefaults: true,
+      directives: {
+        'img-src': ["'self'", 'https: data:']
+      }
+    })
+  )
   // parse application/x-www-form-urlencoded
   app.use(bodyParser.urlencoded({ extended: false }))
   // parse application/json
