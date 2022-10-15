@@ -2,6 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 const routes = [
   {
+    path: '/',
+    redirect: '/login'
+  },
+  {
     path: '/dashboad',
     name: '',
     meta: {
@@ -56,7 +60,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory('/'),
+  history: createWebHistory('/web/'),
   routes
 });
 
