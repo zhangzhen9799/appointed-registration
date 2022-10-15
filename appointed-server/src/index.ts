@@ -29,6 +29,25 @@ const initializeExpress = (): void => {
   // parse application/json
   app.use(bodyParser.json())
   app.use(express.static('static'))
+
+  app.get(/^\/web\/.*/, function (req: Request, res: Response) {
+    const url = req.url
+    const fileName = url.replace(/(.*\/)*([^.]+.*)/gi, '$2')
+    if (url.match(/.js/) !== null) {
+      res.header('Content-Type', 'application/javascript; charset=utf-8')
+      res.sendFile(path.resolve(__dirname, `./static/web/assets/${fileName}`))
+    } else if (url.match(/.css/) !== null) {
+      res.header('Content-Type', 'text/css; charset=utf-8')
+      res.sendFile(path.resolve(__dirname, `./static/web/assets/${fileName}`))
+    } else if (url.match(/.favicon.ico/) !== null) {
+      // favicon.ico
+      res.sendFile(path.resolve(__dirname, './static/web/favicon.ico'))
+    } else {
+      res.header('Content-Type', 'text/html; charset=utf-8')
+      res.sendFile(path.resolve(__dirname, './static/web/index.html'))
+    }
+  })
+
   // output log
   try {
     const errorLogStream = fs.createWriteStream(

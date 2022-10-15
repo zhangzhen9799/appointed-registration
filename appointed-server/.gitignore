@@ -3,3 +3,4 @@ dist
 src/logs/allLogs/*
 src/logs/errorLogs/*
 src/logs/Logs114/*
+src/static/web/**
