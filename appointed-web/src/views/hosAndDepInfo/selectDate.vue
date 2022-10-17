@@ -145,6 +145,9 @@ const createAppointment = async () => {
     secondcode: route.query.secondcode,
     receiveemail: monitorSetting.email,
     interval: monitorSetting.timeInterval,
+    patientPhone: monitorSetting.phone,
+    patientCardNo: monitorSetting.patientInfo.cardNo,
+    patientCardType: monitorSetting.patientInfo.cardType
   };
 
   const { data } = await postAppointmentRecordAPI(params);
