@@ -42,33 +42,31 @@ const loginHandle = async () => {
           <el-input v-model="loginParams.password" type="password" />
         </el-form-item>
       </el-form>
-      <el-button type="primary" @click="loginHandle" class="login-box">
-        Login
-      </el-button>
+      <el-button type="primary" @click="loginHandle"> Login </el-button>
     </el-card>
   </div>
 </template>
   
-<style lang="less">
+<style lang="less" scoped>
 .login-container {
   height: 100%;
   background-color: #f2f2f2;
   position: relative;
-}
 
-.box-card {
-  width: 500px;
-  height: 400px;
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-}
+  .box-card {
+    width: 500px;
+    height: 400px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 
-.login-box {
-  display: block;
-  width: 180px;
-  margin: 0 auto;
+  .el-button {
+    display: block;
+    width: 180px;
+    margin: 0 auto;
+  }
 }
 </style>
   

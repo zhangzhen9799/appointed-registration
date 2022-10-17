@@ -97,7 +97,7 @@ const stateToBtnParams = (state) => {
   </div>
 </template>
   
-<style lang="less">
+<style lang="less" scoped>
 .container {
   height: 100%;
   background-color: #f2f2f2;

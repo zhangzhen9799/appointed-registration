@@ -5,7 +5,7 @@
   <div class="home-container">开发者正在奋力开发中......</div>
 </template>
   
-<style lang="less">
+<style lang="less" scoped>
 .container {
   height: 100%;
   background-color: #f2f2f2;
