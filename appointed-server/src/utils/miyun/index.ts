@@ -7,7 +7,7 @@ import { asyncTaskRetry } from '../common/asyncTaskRetry'
  */
 const miyunToken = '5bdb7fc3ad64-381186'
 const projectId = '54427'
-const miyunHost = 'https://api.miyun.pro'
+const miyunHost = 'http://api.miyun9988.xyz:9002'
 
 /**
  * 从miyun平台取出一个临时手机号
@@ -16,7 +16,7 @@ const miyunHost = 'https://api.miyun.pro'
 export const getPhoneNum = (): Promise<string> => {
   return axios
     .get(
-      `${miyunHost}/api/get_mobile?token=${miyunToken}&project_id=${projectId}&address=%E5%8C%97%E4%BA%AC`
+      `${miyunHost}/api/get_mobile?token=${miyunToken}&project_id=${projectId}&scope_black=170,171`
     )
     .then((res: any) => {
       return res.data.mobile
