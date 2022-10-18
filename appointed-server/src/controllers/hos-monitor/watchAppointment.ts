@@ -2,6 +2,7 @@
 import schedule from 'node-schedule'
 import { OrmDataSource } from '../../database/orm-data-source'
 import { AppointmentRecord } from '../../database/model/AppointmentRecord'
+import { Brackets } from 'typeorm'
 
 interface ObjType {
   [name: string]: any
@@ -30,10 +31,15 @@ export const watchAppointmentList = async (): Promise<any> => {
     .update(AppointmentRecord)
     .set({ state: 3 })
     .where('state = :state', { state: 2 })
-    .andWhere(':datenow > endtime or :outtime > starttime', {
-      datenow: new Date(),
-      outtime: new Date(Date.now() - 1000 * 60 * 10)
-    })
+    .andWhere(
+      new Brackets((qb) => {
+        qb.where(':datenow > endtime', {
+          datenow: new Date()
+        }).orWhere(':outtime > starttime', {
+          outtime: new Date(Date.now() - 1000 * 60 * 5)
+        })
+      })
+    )
     .execute()
   const list = await OrmDataSource.getRepository(AppointmentRecord)
     .createQueryBuilder('appoint')
