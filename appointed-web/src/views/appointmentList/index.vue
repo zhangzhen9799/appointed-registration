@@ -98,16 +98,11 @@ const stateToBtnParams = (state) => {
 </template>
   
 <style lang="less" scoped>
-.container {
-  height: 100%;
-  background-color: #f2f2f2;
-  position: relative;
+.appoint-container {
+  height: 80%;
+  overflow: auto;
+  margin-bottom: 100px;
 }
-.goback {
-  position: fixed;
-  z-index: 999;
-  top: 0.28rem;
-  right: 0.25rem;
-}
+
 </style>
   
