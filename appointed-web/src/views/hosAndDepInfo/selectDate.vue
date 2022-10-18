@@ -124,6 +124,8 @@ const getPatientInfo = async () => {
   const { data } = await getPatientInfoAPI();
   if (data.data.length > 0) {
     console.log(data.data);
+    patientList.length = 0;
+    patientList.push(...data.data)
     ElMessage({
       message: "查找就诊人信息成功",
       type: "success",
