@@ -25,12 +25,14 @@ export const watchAppointmentList = async (): Promise<any> => {
       datenow: new Date()
     })
     .execute()
+  // TODO: 前期均为测试账号，测试账号10分钟自动结束
   await OrmDataSource.createQueryBuilder()
     .update(AppointmentRecord)
     .set({ state: 3 })
     .where('state = :state', { state: 2 })
-    .andWhere(':datenow > endtime', {
-      datenow: new Date()
+    .andWhere(':datenow > endtime or :outtime > starttime', {
+      datenow: new Date(),
+      outtime: new Date(Date.now() - 1000 * 60 * 10)
     })
     .execute()
   const list = await OrmDataSource.getRepository(AppointmentRecord)
