@@ -14,8 +14,8 @@ export const getImageCode = (headers: ReqHeadersType): Promise<any> => {
       setCookie(res.headers['set-cookie'], headers)
       return res
     })
-    .catch((err) => {
-      console.log(err)
+    .catch(() => {
+      console.log('获取图片验证所带cookie异常...')
     })
 }
 

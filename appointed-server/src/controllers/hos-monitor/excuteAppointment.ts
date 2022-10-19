@@ -12,6 +12,10 @@ import HttpProxyConfig from '../../utils/common/httpProxy'
 import userRegister from '../hos-register/register'
 import { getRequestHeadersByUserId } from '../../utils/common/requestHeader114'
 import { getImageCode } from '../hos-register/updateCookie'
+import { Hospital } from '../../database/model/Hospital'
+import { Department } from '../../database/model/Department'
+
+const AppointmentRecordReposity = OrmDataSource.getRepository(AppointmentRecord)
 
 interface msgType {
   addRecords?: AppointmentRecord[]
@@ -24,11 +28,14 @@ interface TaskInsType {
   }
 }
 
+let isBlockMonitor: Boolean = false
+
 const emitParentGetCookieHandle = _.debounce(
   () => {
     console.log(chalk.green('已经通知父进程更新114平台cookie'))
     if (process.send !== undefined) {
       process.send({ needCookie: true })
+      isBlockMonitor = true
     }
   },
   300000,
@@ -66,7 +73,8 @@ const getRegistrationDetails = async (
   firstDeptCode: string,
   secondDeptCode: string,
   hosCode: string,
-  week: number
+  week: number,
+  phone: string
 ): Promise<any> => {
   const headers = getRequestHeadersByUserId()
   await getImageCode(headers)
@@ -93,7 +101,7 @@ const getRegistrationDetails = async (
       } else if (res.data.data !== null) {
         setCookie(res.headers['set-cookie'], headers)
         fs.writeFile(
-          path.join(__dirname, '../../logs/Logs114/searchRecord.log'),
+          path.join(__dirname, `../../logs/Logs114/${phone}.log`),
           JSON.stringify(res.data.data, null, ' '),
           {
             encoding: 'utf-8',
@@ -110,11 +118,12 @@ const getRegistrationDetails = async (
           totalWeek: res.data.data.totalWeek
         }
       } else {
-        console.log('res.data', res.data)
+        // console.log('res.data', res.data)
+        console.log('操作频繁，返回数据异常...')
       }
     })
     .catch(async (err) => {
-      console.log('er===>', err)
+      // console.log('er===>', err)
       throw new Error(err)
     })
     .finally(() => {
@@ -129,13 +138,18 @@ export const excuteAppointment = async (
 ): Promise<void> => {
   // 请求指定平台，是否已经具有可用cookie
   // 如果cookie 不可用，需要尝试重新登录
+  // cookie 不可用，则 isBlockMonitor 为true 然后 直接return
+  if (isBlockMonitor === true) {
+    return
+  }
   const resultList = []
   const { totalWeek, calendars: resultListFirstWeek } =
     await getRegistrationDetails(
       params.firstdepcode,
       params.seconddepcode,
       params.hoscode,
-      1
+      1,
+      params.patient_phone
     )
   const resultRestWeek = []
   // 将剩余的全部加载回来
@@ -145,7 +159,8 @@ export const excuteAppointment = async (
         params.firstdepcode,
         params.seconddepcode,
         params.hoscode,
-        i
+        i,
+        params.patient_phone
       )
     )
   }
@@ -175,10 +190,34 @@ export const excuteAppointment = async (
       console.log(chalk.green('监控平台提醒您，当前订单检测有号可以预约'))
       // 把监控的定时器清除
       searchTM.removeRecords([params.appointmentid])
+      // 连表查询医院和科室名称
+      const recordInfo = await AppointmentRecordReposity.createQueryBuilder(
+        'appointment'
+      )
+        .leftJoinAndSelect(Hospital, 'hos', 'hos.code = appointment.hoscode')
+        .leftJoinAndSelect(
+          Department,
+          'dep',
+          'dep.code = appointment.seconddepcode'
+        )
+        .select(
+          `appointment.appointmentid as id,
+        appointment.hoscode as hoscode,
+        appointment.firstdepcode as firstdepcode,
+        appointment.seconddepcode as seconddepcode,
+        appointment.receive_email as receive_email,
+        appointment.starttime as starttime,
+        appointment.endtime as endtime,
+        appointment.interval as inter_time,
+        hos.name as hosname,
+        dep.name as second_depname,
+        appointment.state as state`
+        )
+        .getRawOne()
       await sendEmail({
         to: params.receive_email,
         subject: '114监控平台',
-        text: `监控平台提醒您，您预约的{医院}-{科室}-${params.starttime}-${params.endtime}，现在有号可约，抓紧时间来预约挂号吧！！！`
+        text: `监控平台提醒您，您预约的${recordInfo.hosname}-${recordInfo.second_depname}-${params.starttime}-${params.endtime}，现在有号可约，抓紧时间来预约挂号吧！！！`
       })
 
       await userRegister.register(
@@ -234,6 +273,9 @@ OrmDataSource.initialize()
           // 减少预约单
           console.log('减少预约单', msg.delRecords)
           searchTM.removeRecords(msg.delRecords)
+        }
+        if (typeof msg === 'object' && msg.updated114Cookie === true) {
+          isBlockMonitor = false
         }
       })
     }

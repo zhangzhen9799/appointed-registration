@@ -51,9 +51,13 @@ watchChild.addListener('exit', () => {})
 
 excuteChild.addListener('message', (msg: msgType) => {
   if (typeof msg === 'object' && msg.needCookie === true) {
-    tmpLogin().catch((err) => {
-      throw new Error(err)
-    })
+    tmpLogin()
+      .then(() => {
+        excuteChild.send({ updated114Cookie: true })
+      })
+      .catch((err) => {
+        throw new Error(err)
+      })
   } else {
     console.log('Message from child:', msg)
   }
