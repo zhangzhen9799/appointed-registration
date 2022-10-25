@@ -32,11 +32,12 @@ let isBlockMonitor: Boolean = false
 
 const emitParentGetCookieHandle = _.debounce(
   () => {
-    console.log(chalk.green('已经通知父进程更新114平台cookie'))
-    if (process.send !== undefined) {
-      process.send({ needCookie: true })
-      isBlockMonitor = true
-    }
+    // console.log(chalk.green('已经通知父进程更新114平台cookie'))
+    // if (process.send !== undefined) {
+    //   process.send({ needCookie: true })
+    //   isBlockMonitor = true
+    // }
+    console.log(chalk.green('114登录状态失效，请检查'))
   },
   300000,
   { leading: true }
@@ -74,9 +75,10 @@ const getRegistrationDetails = async (
   secondDeptCode: string,
   hosCode: string,
   week: number,
-  phone: string
+  phone: string,
+  userid: string
 ): Promise<any> => {
-  const headers = getRequestHeadersByUserId()
+  const headers = getRequestHeadersByUserId(userid)
   await getImageCode(headers)
   return axios
     .post(
@@ -149,7 +151,8 @@ export const excuteAppointment = async (
       params.seconddepcode,
       params.hoscode,
       1,
-      params.patient_phone
+      params.patient_phone,
+      params.userid
     )
   const resultRestWeek = []
   // 将剩余的全部加载回来
@@ -160,7 +163,8 @@ export const excuteAppointment = async (
         params.seconddepcode,
         params.hoscode,
         i,
-        params.patient_phone
+        params.patient_phone,
+        params.userid
       )
     )
   }
