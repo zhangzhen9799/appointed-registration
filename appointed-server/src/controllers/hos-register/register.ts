@@ -431,7 +431,6 @@ const register = async (
   firstDeptCode: string,
   secondDeptCode: string,
   target: string,
-  dutyTime: string,
   filterCallback: (restDoctorItem: RestDoctorsType) => RestDoctorsType[],
   appointmentid: string,
   userid: string
@@ -447,11 +446,15 @@ const register = async (
   // 有余号的医生
   if (Array.isArray(restDoctors) && restDoctors.length > 0) {
     // 根据条件选中一个医生
-    const uniqProductKey = [
+    const { uniqProductKey, period } = [
       ...restDoctors.filter(filterCallback)[0].detail,
       ...restDoctors.filter(filterCallback)[1].detail
-    ][0].uniqProductKey
+    ][0]
     const validateRealNameResult = await validateRealName(userid)
+    let dutyTime = '0'
+    if (Array.isArray(period) && period.length > 0) {
+      dutyTime = period[0].dutyTime
+    }
     // 验证用户实名成功
     if (validateRealNameResult === true) {
       const appointedConfirmRes = await appointedConfirm(
@@ -476,7 +479,7 @@ const register = async (
           // console.log('appointmentInfo====', appointmentInfo)
           const cardNo = appointmentInfo.patient_card
           const cardType = appointmentInfo.patient_card_type
-          const phone = appointmentInfo.patient_card
+          const phone = appointmentInfo.patient_phone
           const email = appointmentInfo.receive_email
 
           const saveAppointmentRes = await saveAppointment(

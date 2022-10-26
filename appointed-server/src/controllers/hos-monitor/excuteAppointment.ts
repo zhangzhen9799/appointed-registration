@@ -174,7 +174,7 @@ const filterAvailableHandle = async (
   params: AppointmentRecord,
   resultList: any
 ): Promise<void> => {
-  console.log('resultList 的长度为', resultList.length)
+  // console.log('resultList 的长度为', resultList.length)
   // 每一项中的status为 "AVAILABLE" 表示当天还有号
   const userSetStartTime = new Date(params.starttime).getTime()
   const userSetEndTime = new Date(params.endtime).getTime()
@@ -226,7 +226,6 @@ const filterAvailableHandle = async (
         params.firstdepcode,
         params.seconddepcode,
         restList[0].dutyDate,
-        '0',
         (item: any) => item,
         params.appointmentid,
         params.userid
