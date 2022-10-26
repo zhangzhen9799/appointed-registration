@@ -145,39 +145,36 @@ export const excuteAppointment = async (
     return
   }
   const resultList = []
-  const { totalWeek, calendars: resultListFirstWeek } =
-    await getRegistrationDetails(
+  const { totalWeek, calendars } = await getRegistrationDetails(
+    params.firstdepcode,
+    params.seconddepcode,
+    params.hoscode,
+    1,
+    params.patient_phone,
+    params.userid
+  )
+  await filterAvailableHandle(params, calendars)
+  // 将剩余的全部加载回来
+  for (let i = 2; i <= totalWeek; i++) {
+    const { calendars } = await getRegistrationDetails(
       params.firstdepcode,
       params.seconddepcode,
       params.hoscode,
-      1,
+      i,
       params.patient_phone,
       params.userid
     )
-  const resultRestWeek = []
-  // 将剩余的全部加载回来
-  for (let i = 2; i <= totalWeek; i++) {
-    resultRestWeek.push(
-      getRegistrationDetails(
-        params.firstdepcode,
-        params.seconddepcode,
-        params.hoscode,
-        i,
-        params.patient_phone,
-        params.userid
-      )
-    )
+    if (calendars.length > 0) {
+      await filterAvailableHandle(params, calendars)
+    }
   }
-  const resultListRestWeek = (await Promise.all(resultRestWeek)).reduce(
-    (acc, cur) => acc.push(cur.calendars),
-    []
-  )
-  if (Array.isArray(resultListFirstWeek)) {
-    resultList.push(...resultListFirstWeek)
-  }
-  if (Array.isArray(resultListRestWeek)) {
-    resultList.push(...resultListRestWeek)
-  }
+}
+
+const filterAvailableHandle = async (
+  params: AppointmentRecord,
+  resultList: any
+): Promise<void> => {
+  console.log('resultList 的长度为', resultList.length)
   // 每一项中的status为 "AVAILABLE" 表示当天还有号
   const userSetStartTime = new Date(params.starttime).getTime()
   const userSetEndTime = new Date(params.endtime).getTime()

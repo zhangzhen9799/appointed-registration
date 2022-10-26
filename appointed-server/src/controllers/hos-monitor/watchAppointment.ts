@@ -27,20 +27,20 @@ export const watchAppointmentList = async (): Promise<any> => {
     })
     .execute()
   // TODO: 前期均为测试账号，测试账号10分钟自动结束
-  await OrmDataSource.createQueryBuilder()
-    .update(AppointmentRecord)
-    .set({ state: 3 })
-    .where('state = :state', { state: 2 })
-    .andWhere(
-      new Brackets((qb) => {
-        qb.where(':datenow > endtime', {
-          datenow: new Date()
-        }).orWhere(':outtime > starttime', {
-          outtime: new Date(Date.now() - 1000 * 60 * 5)
-        })
-      })
-    )
-    .execute()
+  // await OrmDataSource.createQueryBuilder()
+  //   .update(AppointmentRecord)
+  //   .set({ state: 3 })
+  //   .where('state = :state', { state: 2 })
+  //   .andWhere(
+  //     new Brackets((qb) => {
+  //       qb.where(':datenow > endtime', {
+  //         datenow: new Date()
+  //       }).orWhere(':outtime > starttime', {
+  //         outtime: new Date(Date.now() - 1000 * 60 * 5)
+  //       })
+  //     })
+  //   )
+  //   .execute()
   const list = await OrmDataSource.getRepository(AppointmentRecord)
     .createQueryBuilder('appoint')
     .where('appoint.state = :state', { state: 2 })
